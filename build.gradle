@@ -1,0 +1,14 @@
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    maven {
+       url "https://repo.eclipse.org/content/groups/releases/"
+    }
+}
+
+dependencies {
+    compile 'org.eclipse.jgit:org.eclipse.jgit:3.4.0.201406110918-r'
+}

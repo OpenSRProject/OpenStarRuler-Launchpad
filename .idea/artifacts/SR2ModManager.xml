@@ -1,0 +1,16 @@
+<component name="ArtifactManager">
+  <artifact build-on-make="true" name="SR2ModManager">
+    <output-path>$PROJECT_DIR$/out/artifacts/SR2ModManager</output-path>
+    <root id="root">
+      <element id="archive" name="SR2ModManager.jar">
+        <element id="directory" name="META-INF">
+          <element id="file-copy" path="$PROJECT_DIR$/src/resources/META-INF/MANIFEST.MF" />
+        </element>
+        <element id="module-output" name="SR2ModManager" />
+      </element>
+      <element id="directory" name="dependencies">
+        <element id="library" level="project" name="org.eclipse.jgit:org.eclipse.jgit:3.4.0.201406110918-r" />
+      </element>
+    </root>
+  </artifact>
+</component>
