@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Class-Path: dependencies/org.eclipse.jgit-4.11.0.201803080745-r.jar de
+ pendencies/jsch-0.1.50.jar dependencies/commons-logging-1.1.1.jar dep
+ endencies/httpclient-4.1.3.jar dependencies/slf4j-api-1.7.25.jar depe
+ ndencies/JavaEWAH-0.7.9.jar dependencies/commons-codec-1.4.jar depend
+ encies/httpcore-4.1.4.jar
+Main-Class: com.dalolorn.sr2modmanager.Main
+

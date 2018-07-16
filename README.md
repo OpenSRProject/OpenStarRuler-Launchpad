@@ -1,8 +1,8 @@
-# SR2 Mod Manager v0.1.0
+# SR2 Mod Manager v0.2.0
 
 A small, cross-platform tool capable of installing Star Ruler 2 mods uploaded to online Git repositories, such as the ones hosted by GitHub or Bitbucket.
 
-The current version must be run from the command line, but a GUI is in development. 
+The current version can be run from the command line or a basic Swing GUI. 
 
 ## Table of Contents
 

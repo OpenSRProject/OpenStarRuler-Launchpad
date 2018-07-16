@@ -1,12 +1,6 @@
-.gradle
-local.properties
 .idea/workspace.xml
 .idea/uiDesigner.xml
 .idea/dictionaries
 .DS_Store
-build
 out
-*.iml
-gradlew
-gradlew.bat
 Thumbs.db
