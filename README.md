@@ -1,8 +1,8 @@
-# SR2 Mod Manager v0.2.0
+# SR2 Mod Manager v1.0.0 Beta 1
 
 A small, cross-platform tool capable of installing Star Ruler 2 mods uploaded to online Git repositories, such as the ones hosted by GitHub or Bitbucket.
 
-The current version can be run from the command line or a basic Swing GUI. 
+The current version is a JavaFX GUI application, much more deserving of the 'manager' moniker than its predecessor.
 
 ## Table of Contents
 
@@ -25,39 +25,31 @@ The current .zip download contains the following file structure:
 - SR2ModManager
     - dependencies
 	    - *A folder containing a variety of .jar files required by the mod manager*
-	- Download Rising Stars.bat
-	- Download Rising Stars.sh
-		- *A batch file preconfigured to download the current Workshop version of Rising Stars from GitHub, as well as its Linux equivalent*
 	- modmanager.bat
 	- modmanager.sh
-		- *A batch file which will start the mod manager (for those who don't want to start it the 'hard' way, like me), as well as its Linux equivalent*
-	- Readme.txt
+		- *A batch file which will start the mod manager (in case your computer doesn't know how to do it without hand-holding), as well as its Linux equivalent*
+	- README.md
 		- *You are here*
 	- SR2ModManager.jar
-		- *The mod manager itself. Unfortunately, this will not run correctly unless started in a command prompt (or PowerShell, or a Linux equivalent), which is where the abovementioned batch files and shell scripts come into play.*
+		- *The mod manager itself*
 
 To install the mod manager, copy the "SR2ModManager" folder into your Star Ruler 2 root directory (where "Star Ruler 2.exe" is located - and more importantly, where the "mods" folder is located). This will allow it to download the mods directly into the game's mod folder, saving you the extra step of copying the files over yourself.
 
 ## Basic Use
 
-On Windows, your best bet is probably to run modmanager.bat. It will take care of the more annoying aspects of starting the mod manager through the command line, and simply ask you to provide the repository URL and the name of the branch you want to download from.
+On Windows, your best bet is probably to run modmanager.bat. It avoids having to worry about whether Windows knows how to automatically run JAR files or not. (This is probably not a common issue, though.)
 
-On Linux, the equivalent action is to run modmanager.sh. It, too, should just ask for a repository URL and branch name before jumping straight to work.
+On Linux, the equivalent action is to run modmanager.sh. (Whether this actually makes sense is anyone's guess.)
 
-The default parameters (also used explicitly in the "Download Rising Stars" script) are as follows:
+To connect to a repository, enter its URL as if you were trying to access it via a browser, then press 'Connect'. If the protocol is omitted, SR2MM will default to HTTPS - similarly, if the '.git' file extension is missing, SR2MM will automatically append it to the URL. (Consequently, a link such as "github.com/DaloLorn/Rising-Stars" would be a perfectly valid way of accessing the Rising Stars repository.)
 
-Repository URL: https://github.com/DaloLorn/Rising-Stars.git
-Branch name: WorkshopBuild
-
-When downloading from GitHub, the repository URL can be found by clicking on the "Clone or download" button and copying the link that pops up. The branch name, however, depends exclusively on how the repository is structured and which version of the mod you want to use.
-
-Once you've input all the necessary parameters, the mod manager will start downloading the repository. This may take a few minutes, depending on the size of the repository and the speed of your connection, but once it reports "Retrieved repository for mod: So-and-so", your mod will be in the "mods" folder just outside the folder the manager is located in.
+Once a repository has been opened, the branch list in the upper left section of the window will fill up with branch and tag names. Click on one of these to select it, then press 'Install' to install the mod (or update it to the selected version, if it's already installed).  
 
 If you've installed the manager correctly, and the mod was downloaded without any error messages, the only thing left to do is run the game.
 
 ## Advanced Techniques
 
-For now, there's not a lot of these to go around. However, the "Download Rising Stars" files are a decent example of how to write a script that will automatically download from a specific repository and branch, which can be useful if you expect to update the mod on a regular basis.
+For now, there's not a lot of these to go around. You can use File->Open to open an existing repository (regardless of how the repository was downloaded), and Edit->Delete can delete the repository outright, but this latter one is less "advanced technique" and more "user beware". 
 
 ## Modder's Guide
 
@@ -90,6 +82,12 @@ To avoid this issue, it is recommended that you follow the following instruction
     
 After all of these steps have been performed, both SR2 and your Git client should see the mod *exactly* the way they're meant to see it, and this mod manager will be capable of cleanly downloading it from your preferred Git hosting service.
 
+### Descriptions
+
+SR2MM pulls mod descriptions from a plaintext (or Markdown, though Markdown files will also be rendered as plaintext) readme file at the root of the repository, expected to be README.md. If it fails to find this, it will try the filenames README.MD, Readme.md, readme.md, Readme.MD, readme.MD, readme.txt, Readme.txt, README.txt, README.TXT, Readme.TXT, and readme.TXT, in the order listed. (JGit's path filtering does not allow for case insensitivity.) If none of these are present, your mod will not have a description in the mod info panel.
+
+Aside from the mod description, the root directory of each branch or tag can have a branch-description.txt file (alternatives are BRANCH-DESCRIPTION or Branch-Description, extension is either fully lowercase or fully uppercase) which will describe that particular version of the mod. If none exists, SR2MM will try to get the target version's readme file; if this is also missing from a given version of the repository, that version will not have a description in the branch info panel.
+
 ## Troubleshooting FAQ
 
 Q: My computer says `'java' is not recognized as an internal or external command, operable program or batch file.` or something like that!
@@ -100,39 +98,13 @@ Q: Java gives me an error message when I try to run this!
 
 >A: Make sure your computer is running Java 8 or newer. If the error persists, contact me with the exact text of the error.
 
-Q: When I try to run the program, nothing happens!
+Q: When I try to use scripts from SR2MM 0.1.0, nothing happens!
 
->A: You're probably trying to run it by right-clicking SR2ModManager.jar. This doesn't currently work - either use the command line or right-click modmanager.bat (or modmanager.sh on Linux).
+>A: At this time, SR2MM no longer supports running in console mode. As a result, download scripts from 0.1.0 are no longer usable.
 
-Q: The program throws an exception saying "Exception in thread "main" java.io.IOException: Could not delete temporary file %FileName", what do I do?
+Q: The program displayed an error message when I tried to do X!
 
->A: I'm not exactly sure. This means that it tried to create and clear up a temporary folder to download the Git repository, but didn't have enough privileges to delete the folder.
->
->Running as administrator *might* help, but I'm hoping this will never actually happen.
-
-Q: The program says "ERROR: Could not find modinfo.txt!", what does that mean?
-
->A: Simply put, you don't seem to be downloading a valid SR2 mod. Try a different repository, or inform the author of the mod that he's *somehow* missing the most important file.
-
-Q: The program said "ERROR: Could not delete previous mod installation!", now what?
-
->A: In order to avoid bugs, the mod manager has to completely delete the contents of whatever folder it's copying the mod into - including copies it had downloaded itself. For some reason, it was unable to do so.
->
->If this occurs, you have two options: Either make sure there's no reason the folder would be inaccessible (run as administrator, close Star Ruler 2, close anything else accessing the mod's files), or delete the folder yourself.
->
->If the problem persists, contact me and we can try to figure out what's blocking it.
-
-Q: The program said "WARNING: Could not delete temporary folders!". Is this a problem? Should I do anything?
-
->A: Strictly speaking, yes, this is a problem. It means the mod manager failed to clean up after itself, so you now have an unused Git repository taking up a tiny chunk of your disk space. However, if you have enough disk space to spare, then you don't *have* to do anything right away.
->
->If, on the other hand, you're feeling like cleaning it up, Disk Cleanup should catch those files (and possibly many others) just fine. If it doesn't, the manager *does* output the location of the temporary folder, so you should be able to track it down and delete it manually. Nothing to worry about.
-
-Q: The program said "WARNING: Unable to discard repository metadata!". What does this mean?
-
->A: The Git repository you're downloading from isn't structured in a way that the mod manager supports. Because of this, unnecessary data such as the ".git" folder will be copied into your mod folder along with the mod itself, resulting in slower loading times.
->
->If you know how to recognize it, you should probably delete the extra files. If not... your best bet is probably to tell the mod author to read the instructions in this readme.
+>A: Many of the error/warning messages in 1.0.0 come with a recommended solution or workaround. (The 'encountered an exception' message is a notable exception.) If this is not the case, or the solution didn't work, contact me. Some of the possible exceptions *might* be verbose enough that you can figure it out on your own, but I make no promises.
 
 Q: Uhh, this isn't the mod I wanted. What's going on?
 

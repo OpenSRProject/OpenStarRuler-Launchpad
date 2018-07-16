@@ -15,6 +15,7 @@
         <element id="library" level="project" name="jsch-0.1.50" />
         <element id="library" level="project" name="org.eclipse.jgit-4.11.0.201803080745-r" />
       </element>
+      <element id="file-copy" path="$PROJECT_DIR$/README.md" />
     </root>
   </artifact>
 </component>
