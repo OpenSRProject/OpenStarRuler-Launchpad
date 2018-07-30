@@ -16,6 +16,8 @@
         <element id="library" level="project" name="org.eclipse.jgit-4.11.0.201803080745-r" />
       </element>
       <element id="file-copy" path="$PROJECT_DIR$/README.md" />
+      <element id="file-copy" path="$PROJECT_DIR$/modmanager.bat" />
+      <element id="file-copy" path="$PROJECT_DIR$/modmanager.sh" />
     </root>
   </artifact>
 </component>

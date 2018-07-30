@@ -69,7 +69,7 @@
             <ListView fx:id="branchList" layoutY="25.0" prefHeight="275.0" prefWidth="300.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="25.0" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER" />
             <VBox alignment="CENTER" fillWidth="false" spacing="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" GridPane.columnIndex="1" GridPane.vgrow="NEVER">
                <children>
-                  <Label fx:id="urlLabel" alignment="CENTER" contentDisplay="CENTER" text="No repository selected" AnchorPane.leftAnchor="80.0" AnchorPane.rightAnchor="80.0" AnchorPane.topAnchor="15.0">
+                  <Label fx:id="urlLabel" alignment="CENTER" contentDisplay="CENTER" text="No repository selected" textAlignment="CENTER" wrapText="true" AnchorPane.leftAnchor="80.0" AnchorPane.rightAnchor="80.0" AnchorPane.topAnchor="15.0">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
