@@ -15,5 +15,6 @@
     <orderEntry type="library" exported="" name="jsch-0.1.50" level="project" />
     <orderEntry type="library" exported="" name="org.eclipse.jgit-4.11.0.201803080745-r" level="project" />
     <orderEntry type="library" exported="" name="slf4j-api-1.7.25" level="project" />
+    <orderEntry type="library" name="com.google.code.gson:gson:2.8.6" level="project" />
   </component>
 </module>

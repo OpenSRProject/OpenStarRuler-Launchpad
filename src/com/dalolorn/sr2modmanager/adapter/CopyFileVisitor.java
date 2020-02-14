@@ -1,5 +1,4 @@
-package com.dalolorn.sr2modmanager;
-
+package com.dalolorn.sr2modmanager.adapter;
 
 import java.io.IOException;
 import java.nio.file.FileVisitResult;

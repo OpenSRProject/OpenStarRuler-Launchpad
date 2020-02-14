@@ -14,6 +14,7 @@
         <element id="library" level="project" name="JavaEWAH-0.7.9" />
         <element id="library" level="project" name="jsch-0.1.50" />
         <element id="library" level="project" name="org.eclipse.jgit-4.11.0.201803080745-r" />
+        <element id="library" level="project" name="com.google.code.gson:gson:2.8.6" />
       </element>
       <element id="file-copy" path="$PROJECT_DIR$/README.md" />
       <element id="file-copy" path="$PROJECT_DIR$/modmanager.bat" />

@@ -1,4 +1,4 @@
-# SR2 Mod Manager v1.0.0 Beta 1
+# SR2 Mod Manager v1.1.0
 
 A small, cross-platform tool capable of installing Star Ruler 2 mods uploaded to online Git repositories, such as the ones hosted by GitHub or Bitbucket.
 
@@ -18,6 +18,7 @@ The current version is a JavaFX GUI application, much more deserving of the 'man
 In order to run this application, you must first have a computer with all of the following:
 
 - Java Runtime Environment 1.8 or newer (Also known as Java 8)
+- JavaFX Runtime (may or may not be included in your JRE)
 - An Internet connection
 
 The current .zip download contains the following file structure:
@@ -59,7 +60,7 @@ The mod manager expects the mod's files to be contained inside a folder at the r
 
 If modinfo.txt is located in the repository's root directory, then the repository itself - and any other unnecessary files, such as .gitignore - will not be ignored, slowing the game down as it checks a bunch of useless files for meaningful data. This will also be problematic when trying to open the mod in the mod editor.
 
-To avoid this issue, it is recommended that you follow the following instructions to create a symbolic link, storing the actual repository outside the game's mod folder without any negative effects: (Credit goes to Darloth for the original idea at https://github.com/DaloLorn/issues/20)
+To avoid this issue, it is recommended that you follow the following instructions to create a symbolic link, storing the actual repository outside the game's mod folder without any negative effects: (Credit goes to Darloth for the original idea at https://github.com/DaloLorn/Rising-Stars/issues/20)
 
 1. Create a folder to keep the repository in. Example: "C:\Projects\SourceControl\SR2-Rising Stars"
 2. Move your mod folder into the folder from step 1. Example: Move "C:\Program Files (x86)\Steam\SteamApps\common\Star Ruler 2\mods\Rising Stars" to "C:\Projects\SourceControl\SR2-Rising Stars\Rising Stars"

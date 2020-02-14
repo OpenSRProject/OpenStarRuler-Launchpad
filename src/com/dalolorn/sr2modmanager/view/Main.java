@@ -1,4 +1,4 @@
-package com.dalolorn.sr2modmanager;
+package com.dalolorn.sr2modmanager.view;
 
 import java.io.IOException;
 

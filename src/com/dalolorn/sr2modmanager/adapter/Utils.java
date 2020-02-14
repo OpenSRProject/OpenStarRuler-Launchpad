@@ -1,4 +1,4 @@
-package com.dalolorn.sr2modmanager;
+package com.dalolorn.sr2modmanager.adapter;
 
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Repository;

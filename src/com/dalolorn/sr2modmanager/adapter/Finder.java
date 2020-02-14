@@ -1,4 +1,4 @@
-package com.dalolorn.sr2modmanager;
+package com.dalolorn.sr2modmanager.adapter;
 
 import java.io.IOException;
 import java.nio.file.*;
@@ -6,30 +6,17 @@ import java.nio.file.attribute.BasicFileAttributes;
 
 import static java.nio.file.FileVisitResult.CONTINUE;
 
-public class Finder extends SimpleFileVisitor<Path> {
-	private final PathMatcher matcher;
-	private Path result;
+public abstract class Finder<T> extends SimpleFileVisitor<Path> {
+	protected final PathMatcher matcher;
 
 	Finder(String pattern) {
 		matcher = FileSystems.getDefault()
 				.getPathMatcher("glob:" + pattern);
 	}
 
-	// Compares the glob pattern against
-	// the file or directory name.
-	Path find(Path file) {
-		Path name = file.getFileName();
-		if (name != null && matcher.matches(name)) {
-			result = file;
-			return file;
-		}
-		return null;
-	}
+	protected abstract T find(Path file);
 
-	// Returns the result.
-	Path getResult() {
-		return result;
-	}
+	public abstract T getResult();
 
 	// Invoke the pattern matching
 	// method on each file.
