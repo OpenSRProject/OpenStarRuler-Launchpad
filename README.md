@@ -18,7 +18,7 @@ The current version is a JavaFX GUI application, much more deserving of the 'man
 In order to run this application, you must first have a computer with all of the following:
 
 - Java Runtime Environment 1.8 or newer (Also known as Java 8)
-- JavaFX Runtime (may or may not be included in your JRE)
+- JavaFX (or OpenJavaFX, if using OpenJDK) compatible with Java 8 - when in doubt, you can probably go for the latest release
 - An Internet connection
 
 The current .zip download contains the following file structure:
@@ -97,7 +97,7 @@ Q: My computer says `'java' is not recognized as an internal or external command
 
 Q: Java gives me an error message when I try to run this!
 
->A: Make sure your computer is running Java 8 or newer. If the error persists, contact me with the exact text of the error.
+>A: Make sure your computer is running Java 8 or newer, and has a matching version of JavaFX. If the error persists, contact me with the exact text of the error.
 
 Q: When I try to use scripts from SR2MM 0.1.0, nothing happens!
 
