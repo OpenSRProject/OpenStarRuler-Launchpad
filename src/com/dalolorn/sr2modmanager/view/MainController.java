@@ -1,6 +1,7 @@
 package com.dalolorn.sr2modmanager.view;
 
 import com.dalolorn.sr2modmanager.adapter.RepositoryManager;
+import com.dalolorn.sr2modmanager.adapter.Settings;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -26,6 +27,32 @@ public class MainController {
 
 	public void initialize() {
 		branchList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> setActiveBranch(newValue));
+
+		boolean needsConfig = true;
+		try {
+			if(!Settings.load()) {
+				needsConfig = false;
+			}
+		} catch(IOException e) {
+			Alert msg = new Alert(Alert.AlertType.ERROR, "Could not load config.json! Cause:"  + e.toString());
+			e.printStackTrace();
+			msg.showAndWait();
+		}
+		if(needsConfig || !new File(Settings.getInstance().gamePath + File.separator + "Star Ruler 2.exe").exists()) {
+			Alert msg = new Alert(Alert.AlertType.WARNING, "Could not autodetect Star Ruler 2 folder! Please navigate to the root folder of your SR2 installation, containing the files 'Star Ruler 2.exe' and 'Star Ruler 2.sh'!");
+			msg.showAndWait();
+			setSR2Path(new ActionEvent());
+		}
+	}
+
+	@FXML private void setSR2Path(ActionEvent event) {
+		DirectoryChooser chooser = new DirectoryChooser();
+		chooser.setInitialDirectory(new File(Settings.getInstance().gamePath));
+		chooser.getInitialDirectory().mkdirs();
+		chooser.setTitle("Set SR2 Path");
+		final File dir = chooser.showDialog(urlField.getScene().getWindow()); // Anything on the window would suffice, urlField was just arbitrarily selected.
+		if(dir == null)
+			return;
 	}
 
 	private void setActiveBranch(String branchName) {
@@ -277,7 +304,7 @@ public class MainController {
 		Alert msg = new Alert(Alert.AlertType.INFORMATION,
 				"SR2 Mod Manager by Dalo Lorn\n" +
 						"\n" +
-						"Version: 1.0.0 Beta 1\n\n" +
+						"Version: 1.1.1\n\n" +
 						"GitHub: https://github.com/DaloLorn/SR2ModManager\n" +
 						"Discord: https://discord.gg/sUJKJDc\n" +
 						"Patreon: https://patreon.com/rising_stars_sr2");

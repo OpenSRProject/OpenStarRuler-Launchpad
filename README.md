@@ -60,34 +60,74 @@ The mod manager expects the mod's files to be contained inside a folder at the r
 
 If modinfo.txt is located in the repository's root directory, then the repository itself - and any other unnecessary files, such as .gitignore - will not be ignored, slowing the game down as it checks a bunch of useless files for meaningful data. This will also be problematic when trying to open the mod in the mod editor.
 
-To avoid this issue, it is recommended that you follow the following instructions to create a symbolic link, storing the actual repository outside the game's mod folder without any negative effects: (Credit goes to Darloth for the original idea at https://github.com/DaloLorn/Rising-Stars/issues/20)
+To avoid this issue, it is recommended that you follow the following instructions to create a symbolic link, storing the actual repository outside the game's mod folder without any negative effects: (Credit goes to Darloth for the original idea at https://github.com/DaloLorn/Rising-Stars/issues/20, and Skeletonxf for the Linux version)
 
-1. Create a folder to keep the repository in. Example: "C:\Projects\SourceControl\SR2-Rising Stars"
-2. Move your mod folder into the folder from step 1. Example: Move "C:\Program Files (x86)\Steam\SteamApps\common\Star Ruler 2\mods\Rising Stars" to "C:\Projects\SourceControl\SR2-Rising Stars\Rising Stars"
+### Windows Symlinking
+
+1. Create a folder to keep the repository in. Example: `C:\Projects\SourceControl\SR2-Rising Stars`
+2. Move your mod folder into the folder from step 1. Example: Move `C:\Program Files (x86)\Steam\SteamApps\common\Star Ruler 2\mods\Rising Stars` to `C:\Projects\SourceControl\SR2-Rising Stars\Rising Stars`
 3. Using your preferred Git client or the Git command line, create a Git repository in the folder from step 1 and add the contents of your mod folder to the repository. Commit the added files. Example: 
     ```
-	    cd "C:\Projects\SourceControl\SR2-Rising Stars"
-	    git init
-	    git commit -a -m "Initial commit"
+        cd "C:\Projects\SourceControl\SR2-Rising-Stars"
+        git init
+        git commit -a -m "Initial commit"
     ```
-    This should have added *everything* in the "SR2-Rising Stars" folder to the repository - most importantly, it should have added the entire "Rising Stars" folder.
+
+    This should have added *everything* in the `SR2-Rising-Stars` folder to the repository - most importantly, it should have added the entire `Rising Stars` folder.
 
 4. Close your Git client/command line, then open a command prompt, preferably an admin command prompt (just in case either the source or destination folder are in Program Files). Navigate to your Star Ruler 2 mods directory. Example:
     ```
-	    cd "C:\Program Files (x86)\Steam\SteamApps\common\Star Ruler 2\mods"
+        cd "C:\Program Files (x86)\Steam\SteamApps\common\Star Ruler 2\mods"
     ```
 5. Create a symbolic link (specifically, a directory junction) from the mod folder in your Git repository to your SR2 mods directory. Example:
     ```
-	    mklink /J "Rising Stars" "C:\Projects\SourceControl\SR2-Rising Stars\Rising Stars"
+        mklink /J "Rising Stars" "C:\Projects\SourceControl\SR2-Rising Stars\Rising Stars"
     ```
+   
+### Linux Symlinking
+
+1. Create a folder to keep the repository in. Example: `mkdir /opt/Projects/SourceControl/SR2-Rising-Stars`
+
+2. Move your mod folder into the folder from step 1. Example: `mv "/opt/Star Ruler 2/mods/Rising Stars" "/opt/Projects/SourceControl/SR2-Rising-Stars/Rising Stars"`
+
+3. Using your preferred Git client or the Git command line, create a Git repository in the folder from step 1 and add the contents of your mod folder to the repository. Commit the added files. Example:
+    ```
+        cd /opt/Projects/SourceControl/SR2-Rising-Stars
+        git init
+        git commit -a -m "Initial commit"
+    ```
+   
+   This should have added *everything* in the `SR2-Rising-Stars` folder to the repository - most importantly, it should have added the entire `Rising Stars` folder.
+   
+4. Create a bind mount from the mod folder in your Git repository to your SR2 mods directory. Example:
+    ```
+        sudo mount --bind "/opt/Projects/SourceControl/SR2-Rising-Stars/Rising Stars" "/opt/Star Ruler 2/mods/Rising Stars" 
+    ```
+   
+5. Once you have verified that the mounting was successful, open `/etc/fstab` (some distros may use a different file) using a superuser text editor. Append a line with the syntax `/SOURCE /DESTINATION none bind` to the file. Save and exit; your OS should now automatically remount the folder on reboot. (Note that paths containing spaces must not be quoted, but must instead replace all spaces with the text `\040`!) Example:
+    ```
+        /opt/projects/SourceControl/SR2-Rising-Stars/Rising\040Stars /opt/Star\040Ruler\0402/mods/Rising\040Stars none bind   
+    ```
+    
     
 After all of these steps have been performed, both SR2 and your Git client should see the mod *exactly* the way they're meant to see it, and this mod manager will be capable of cleanly downloading it from your preferred Git hosting service.
 
-### Descriptions
+### Mod & Branch Descriptions
 
-SR2MM pulls mod descriptions from a plaintext (or Markdown, though Markdown files will also be rendered as plaintext) readme file at the root of the repository, expected to be README.md. If it fails to find this, it will try the filenames README.MD, Readme.md, readme.md, Readme.MD, readme.MD, readme.txt, Readme.txt, README.txt, README.TXT, Readme.TXT, and readme.TXT, in the order listed. (JGit's path filtering does not allow for case insensitivity.) If none of these are present, your mod will not have a description in the mod info panel.
+SR2MM pulls mod descriptions from a plaintext (or Markdown, though Markdown files will also be rendered as plaintext) readme file at the root of the repository, expected to be `README.md`. If it fails to find this, it will try the filenames `README.MD`, `Readme.md`, `readme.md`, `Readme.MD`, `readme.MD`, `readme.txt`, `Readme.txt`, `README.txt`, `README.TXT`, `Readme.TXT`, and `readme.TXT`, in the order listed. (JGit's path filtering does not allow for case insensitivity.) If none of these are present, your mod will not have a description in the mod info panel.
 
-Aside from the mod description, the root directory of each branch or tag can have a branch-description.txt file (alternatives are BRANCH-DESCRIPTION or Branch-Description, extension is either fully lowercase or fully uppercase) which will describe that particular version of the mod. If none exists, SR2MM will try to get the target version's readme file; if this is also missing from a given version of the repository, that version will not have a description in the branch info panel.
+~~Aside from the mod description, the root directory of each branch or tag can have a `branch-description.txt` file (alternatives are `BRANCH-DESCRIPTION` or `Branch-Description`, extension is either fully lowercase or fully uppercase) which will describe that particular version of the mod. If none exists, SR2MM will try to get the target version's readme file; if this is also missing from a given version of the repository, that version will not have a description in the branch info panel.~~ (Although this functionality is still fully supported, the below method may be easier to use with more complex repositories.)
+
+Aside from the mod description, the root directory of each branch or tag can have a `branch-descriptions.json` JSON file (alternatives are `BRANCH-DESCRIPTIONS` or `Branch-Descriptions`, extension is either fully lowercase or fully uppercase) which will describe all versions of the mod. (Note that while I say "all versions", only the active branch's description will be pulled from the JSON.) If none exists, SR2MM will try to get the target version's readme file; if this is also missing from a given version of the repository, that version will not have a description in the branch info panel.
+
+An example JSON containing descriptions for the `master` and `WorkshopBuild` branches:
+
+```json
+{
+  "master": "This branch is used for minor development not related to a specific version of Rising Stars, such as hotfixes.\n\nSince 1.3.0, Rising Stars requires the SR2 Community Patch to be installed, from the branch \"master\". SR2MM versions 1.1.0 and above will automatically install the Community Patch when you try to install Rising Stars from this branch.",
+  "WorkshopBuild": "This branch consistently tracks the Steam Workshop version of Rising Stars. If it's on the Workshop, it's here - and vice versa.\n\nSince 1.3.0, Rising Stars requires the SR2 Community Patch to be installed, from the branch \"master\". SR2MM versions 1.1.0 and above will automatically install the Community Patch when you try to install Rising Stars from this branch."
+}
+```
 
 ## Troubleshooting FAQ
 

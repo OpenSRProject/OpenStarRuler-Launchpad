@@ -14,23 +14,25 @@ public class Settings {
 
 	private static Settings instance = new Settings();
 
-	public static void load() throws IOException {
+	public static boolean load() throws IOException {
 		File file = new File("config.json");
 		if(!file.exists()) {
 			getInstance().save();
+			return false;
 		}
 		else {
 			try (FileReader reader = new FileReader(file)) {
 				instance = new Gson().fromJson(reader, Settings.class);
 			}
 		}
+		return true;
 	}
 
 	public static Settings getInstance() {
 		return instance;
 	}
 
-	public void save() throws IOException{
+	public void save() throws IOException {
 		File file = new File("config.json");
 		if(!file.exists()) {
 			file.createNewFile();

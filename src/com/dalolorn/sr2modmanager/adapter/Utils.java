@@ -17,11 +17,23 @@ public class Utils {
 		TreeWalk result = null;
 		try {
 			if (result == null)
+				result = TreeWalk.forPath(repo, "branch-descriptions.json", tree);
+			if (result == null)
+				result = TreeWalk.forPath(repo, "Branch-Descriptions.json", tree);
+			if (result == null)
+				result = TreeWalk.forPath(repo, "BRANCH-DESCRIPTIONS.json", tree);
+			if (result == null)
 				result = TreeWalk.forPath(repo, "branch-description.txt", tree);
 			if (result == null)
 				result = TreeWalk.forPath(repo, "Branch-Description.txt", tree);
 			if (result == null)
 				result = TreeWalk.forPath(repo, "BRANCH-DESCRIPTION.txt", tree);
+			if (result == null)
+				result = TreeWalk.forPath(repo, "BRANCH-DESCRIPTIONS.JSON", tree);
+			if (result == null)
+				result = TreeWalk.forPath(repo, "Branch-Descriptions.JSON", tree);
+			if (result == null)
+				result = TreeWalk.forPath(repo, "branch-descriptions.JSON", tree);
 			if (result == null)
 				result = TreeWalk.forPath(repo, "BRANCH-DESCRIPTION.TXT", tree);
 			if (result == null)

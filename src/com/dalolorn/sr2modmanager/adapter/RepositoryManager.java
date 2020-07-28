@@ -2,6 +2,8 @@ package com.dalolorn.sr2modmanager.adapter;
 
 import com.dalolorn.sr2modmanager.model.Metadata;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 import org.eclipse.jgit.api.CreateBranchCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ListBranchCommand;
@@ -51,7 +53,21 @@ public class RepositoryManager {
 				InputStream descriptionStream = descriptionLoader.openStream();
 				BufferedReader descriptionReader = new BufferedReader(new InputStreamReader(descriptionStream))
 		) {
-			return descriptionReader.lines().collect(Collectors.joining("\n"));
+			String json = descriptionReader.lines().collect(Collectors.joining("\n"));
+			try {
+				Map<String, String> descriptions = new Gson().fromJson(json, new TypeToken<HashMap<String, String>>(){}.getType());
+				if(descriptions != null && !descriptions.isEmpty()) {
+					return descriptions.getOrDefault(
+							currentBranch.getName(),
+							"No description could be found for this branch."
+					);
+				}
+				else {
+					return "No description could be found for this branch.";
+				}
+			} catch (JsonSyntaxException e) {
+				return json;
+			}
 		} catch (NullPointerException | IOException e) {
 			return "No description could be found for this branch.";
 		}
