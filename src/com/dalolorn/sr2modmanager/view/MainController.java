@@ -11,10 +11,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
-import javafx.stage.DirectoryChooser;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
+import javafx.stage.*;
 
 import java.io.*;
 import java.util.List;
@@ -38,21 +35,47 @@ public class MainController {
 			e.printStackTrace();
 			msg.showAndWait();
 		}
-		if(needsConfig || !new File(Settings.getInstance().gamePath + File.separator + "Star Ruler 2.exe").exists()) {
-			Alert msg = new Alert(Alert.AlertType.WARNING, "Could not autodetect Star Ruler 2 folder! Please navigate to the root folder of your SR2 installation, containing the files 'Star Ruler 2.exe' and 'Star Ruler 2.sh'!");
+		if(needsConfig || !new File(Settings.getInstance().gamePath, "Star Ruler 2.exe").exists() || !new File(Settings.getInstance().gamePath, "StarRuler2.sh").exists()) {
+			Alert msg = new Alert(Alert.AlertType.WARNING, "Could not detect Star Ruler 2 launchers! Please navigate to the root folder of your SR2 installation, containing the files 'Star Ruler 2.exe' and 'StarRuler2.sh'!");
 			msg.showAndWait();
-			setSR2Path(new ActionEvent());
+			setSR2Path((Window) null);
 		}
 	}
 
 	@FXML private void setSR2Path(ActionEvent event) {
+		setSR2Path(new File(Settings.getInstance().gamePath), urlField.getScene().getWindow());
+	}
+
+	private void setSR2Path(Window window) {
+		setSR2Path(new File(Settings.getInstance().gamePath), window);
+	}
+
+	private void setSR2Path(File initialDirectory, Window window) {
 		DirectoryChooser chooser = new DirectoryChooser();
-		chooser.setInitialDirectory(new File(Settings.getInstance().gamePath));
-		chooser.getInitialDirectory().mkdirs();
+		chooser.setInitialDirectory(initialDirectory);
+		if(!chooser.getInitialDirectory().exists())
+			chooser.setInitialDirectory(new File("."));
 		chooser.setTitle("Set SR2 Path");
-		final File dir = chooser.showDialog(urlField.getScene().getWindow()); // Anything on the window would suffice, urlField was just arbitrarily selected.
-		if(dir == null)
+		File dir = chooser.showDialog(window);
+		if(dir == null || !dir.exists())
 			return;
+		File winLauncher = new File(dir, "Star Ruler 2.exe");
+		File linuxLauncher = new File(dir, "StarRuler2.sh");
+		if(!winLauncher.exists() || !linuxLauncher.exists()) {
+			Alert msg = new Alert(Alert.AlertType.ERROR, "This is not the root directory of a Star Ruler 2 installation!");
+			msg.showAndWait();
+			setSR2Path(dir, window);
+			return;
+		}
+
+		Settings.getInstance().gamePath = dir.getAbsolutePath();
+		try {
+			Settings.getInstance().save();
+		} catch (IOException e) {
+			Alert msg = new Alert(Alert.AlertType.WARNING, "Failed to save config file!");
+			msg.show();
+			e.printStackTrace();
+		}
 	}
 
 	private void setActiveBranch(String branchName) {

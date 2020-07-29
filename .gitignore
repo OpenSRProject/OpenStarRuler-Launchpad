@@ -1,6 +1,9 @@
 .idea/workspace.xml
 .idea/uiDesigner.xml
 .idea/dictionaries
+.idea/sonarlint
 .DS_Store
+config.json
 out
+repositories/*
 Thumbs.db

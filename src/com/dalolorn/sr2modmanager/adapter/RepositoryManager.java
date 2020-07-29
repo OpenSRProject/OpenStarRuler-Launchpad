@@ -304,8 +304,9 @@ public class RepositoryManager {
 		if(errorHandler == null) errorHandler = text -> {};
 
 		try {
-			progressHandler.handle("Checking out target branch...");
-			boolean createBranch = repo.getRepository().resolve(currentBranch.getName().replaceFirst("refs/remotes/origin", "refs/heads")) == null;
+			progressHandler.handle("Checking out target branch or tag...");
+			boolean isTag = currentBranch.getName().startsWith("refs/tags/");
+			boolean createBranch = !isTag && repo.getRepository().resolve(currentBranch.getName().replaceFirst("refs/remotes/origin", "refs/heads")) == null;
 
 			repo.checkout()
 					.setName(currentBranch.getName().replaceFirst("refs/remotes/origin/", ""))
@@ -314,8 +315,10 @@ public class RepositoryManager {
 					.setStartPoint(currentBranch.getName())
 					.call();
 
-			progressHandler.handle("Pulling upstream changes...");
-			repo.pull().call();
+			if(!isTag) {
+				progressHandler.handle("Pulling upstream changes...");
+				repo.pull().call();
+			}
 
 			installModImpl(repo, warningHandler, progressHandler, infoHandler, errorHandler);
 		} catch (Exception e) {
