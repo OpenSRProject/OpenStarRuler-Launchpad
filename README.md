@@ -17,8 +17,8 @@ The current version is a JavaFX GUI application, much more deserving of the 'man
 
 In order to run this application, you must first have a computer with all of the following:
 
-- Java Runtime Environment 1.8 or newer (Also known as Java 8)
-- JavaFX (or OpenJavaFX, if using OpenJDK) compatible with Java 8 - when in doubt, you can probably go for the latest release
+- Java Runtime Environment 1.8 (also known as Java 8)
+- JavaFX (or OpenJavaFX, if using OpenJDK) binaries compatible with Java 8
 - An Internet connection
 
 The current .zip download contains the following file structure:
@@ -134,6 +134,10 @@ An example JSON containing descriptions for the `master` and `WorkshopBuild` bra
 Q: My computer says `'java' is not recognized as an internal or external command, operable program or batch file.` or something like that!
 
 >A: You do not have Java installed, or it is not correctly installed. You will need to download whichever version of the Java Runtime Environment is appropriate for your operating system from http://www.oracle.com/technetwork/java/javase/downloads/index.html and try again.
+
+Q: I got this error: `Error: Could not find or load main class com.dalolorn.sr2modmanager.view.Main Caused by: java.lang.NoClassDefFoundError: javafx/application/Application` What now?
+
+>A: You're using a newer version of Java. Right now, I'm not entirely clear on what your options are, except installing Java 8. Sorry. :/
 
 Q: Java gives me an error message when I try to run this!
 
