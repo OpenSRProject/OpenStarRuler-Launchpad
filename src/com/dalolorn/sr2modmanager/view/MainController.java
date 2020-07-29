@@ -27,9 +27,7 @@ public class MainController {
 
 		boolean needsConfig = true;
 		try {
-			if(!Settings.load()) {
-				needsConfig = false;
-			}
+			needsConfig = !Settings.load();
 		} catch(IOException e) {
 			Alert msg = new Alert(Alert.AlertType.ERROR, "Could not load config.json! Cause:"  + e.toString());
 			e.printStackTrace();

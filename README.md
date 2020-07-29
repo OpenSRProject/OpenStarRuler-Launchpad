@@ -104,9 +104,9 @@ To avoid this issue, it is recommended that you follow the following instruction
         sudo mount --bind "/opt/Projects/SourceControl/SR2-Rising-Stars/Rising Stars" "/opt/Star Ruler 2/mods/Rising Stars" 
     ```
    
-5. Once you have verified that the mounting was successful, open `/etc/fstab` (some distros may use a different file) using a superuser text editor. Append a line with the syntax `/SOURCE /DESTINATION none bind` to the file. Save and exit; your OS should now automatically remount the folder on reboot. (Note that paths containing spaces must not be quoted, but must instead replace all spaces with the text `\040`!) Example:
+5. Once you have verified that the mounting was successful, open `/etc/fstab` (some distros may use a different file; consult your manual or other OS documentation) using a superuser text editor. Append a line with the syntax `SOURCE DESTINATION none bind` to the file. Save and exit; your OS should now automatically remount the folder on reboot. (Note that paths containing spaces must not be quoted, but must instead replace all spaces with the text `\040`!) Example:
     ```
-        /opt/projects/SourceControl/SR2-Rising-Stars/Rising\040Stars /opt/Star\040Ruler\0402/mods/Rising\040Stars none bind   
+        /opt/Projects/SourceControl/SR2-Rising-Stars/Rising\040Stars /opt/Star\040Ruler\0402/mods/Rising\040Stars none bind   
     ```
     
     

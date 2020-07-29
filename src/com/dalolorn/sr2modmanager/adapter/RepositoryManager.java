@@ -58,7 +58,7 @@ public class RepositoryManager {
 				Map<String, String> descriptions = new Gson().fromJson(json, new TypeToken<HashMap<String, String>>(){}.getType());
 				if(descriptions != null && !descriptions.isEmpty()) {
 					return descriptions.getOrDefault(
-							currentBranch.getName(),
+							branchName,
 							"No description could be found for this branch."
 					);
 				}
