@@ -34,15 +34,19 @@ The current .zip download contains the following file structure:
 	- SR2ModManager.jar
 		- *The mod manager itself*
 
-To install the mod manager, copy the "SR2ModManager" folder into your Star Ruler 2 root directory (where "Star Ruler 2.exe" is located - and more importantly, where the "mods" folder is located). This will allow it to download the mods directly into the game's mod folder, saving you the extra step of copying the files over yourself.
+To install the mod manager, extract the `SR2ModManager` folder wherever you like. Ideally, this will be your Star Ruler 2 root directory (where `Star Ruler 2.exe` and `StarRuler2.sh` are located - and more importantly, where the `mods` folder is or *will be* located). This will allow it to download the mods directly into the game's mod folder, saving you the extra step of copying the files over yourself.
+
+Note that as of v1.1.1, SR2MM is capable of relatively gracefully handling cases where it has been installed in the 'wrong' location. You will be asked to locate your SR2 folder, and the correct path will then be stored in a JSON config file. If you refuse, it will default to the the last stored location, or the relative path `..`. (You can bring up the dialog again at any time via 'Options->Set SR2 Path'.)
 
 ## Basic Use
 
-On Windows, your best bet is probably to run modmanager.bat. It avoids having to worry about whether Windows knows how to automatically run JAR files or not. (This is probably not a common issue, though.)
+On Windows, your best bet is probably to run `modmanager.bat`. It avoids having to worry about whether Windows knows how to automatically run JAR files or not. (This is probably not a common issue, though.)
 
-On Linux, the equivalent action is to run modmanager.sh. (Whether this actually makes sense is anyone's guess.)
+On Linux, the equivalent action is to run `modmanager.sh`. (Whether this actually makes sense is anyone's guess.)
 
-To connect to a repository, enter its URL as if you were trying to access it via a browser, then press 'Connect'. If the protocol is omitted, SR2MM will default to HTTPS - similarly, if the '.git' file extension is missing, SR2MM will automatically append it to the URL. (Consequently, a link such as "github.com/DaloLorn/Rising-Stars" would be a perfectly valid way of accessing the Rising Stars repository.)
+To connect to a repository, enter its URL as if you were trying to access it via a browser, then press 'Connect'. If the protocol is omitted, SR2MM will default to HTTPS - similarly, if the `.git` file extension is missing, SR2MM will automatically append it to the URL. (Consequently, a link such as `github.com/DaloLorn/Rising-Stars` would be a perfectly valid way of accessing the Rising Stars repository.)
+
+You can also open a previously downloaded repository by using 'File->Open' and selecting the desired repository folder. (For instance, the Rising Stars repository would be stored in `DaloLorn_Rising-Stars`.)
 
 Once a repository has been opened, the branch list in the upper left section of the window will fill up with branch and tag names. Click on one of these to select it, then press 'Install' to install the mod (or update it to the selected version, if it's already installed).  
 
@@ -50,15 +54,15 @@ If you've installed the manager correctly, and the mod was downloaded without an
 
 ## Advanced Techniques
 
-For now, there's not a lot of these to go around. You can use File->Open to open an existing repository (regardless of how the repository was downloaded), and Edit->Delete can delete the repository outright, but this latter one is less "advanced technique" and more "user beware". 
+For now, there's not a lot of these to go around. You can use 'Edit->Delete' to delete the currently opened repository outright, but this is less of an "advanced technique" and more "do this at your own risk". 
 
 ## Modder's Guide
 
 Obviously, the mod manager only supports Git repositories right now, and you'll need to know how to upload those to a hosting service such as GitHub, or host it on a server of your own. However, there's one more thing you should pay attention to: Your mod's file structure.
 
-The mod manager expects the mod's files to be contained inside a folder at the root of the repository, such as the "Rising Stars" folder at the root of the Rising Stars repository. It will search for the mod's modinfo.txt file, and only copy the folder containing that file.
+The mod manager expects the mod's files to be contained inside a folder at the root of the repository, such as the `Rising Stars` folder at the root of the Rising Stars repository. It will search for the mod's `modinfo.txt` file, and only copy the folder containing that file.
 
-If modinfo.txt is located in the repository's root directory, then the repository itself - and any other unnecessary files, such as .gitignore - will not be ignored, slowing the game down as it checks a bunch of useless files for meaningful data. This will also be problematic when trying to open the mod in the mod editor.
+If `modinfo.txt` is located in the repository's root directory, then the repository itself - and any other unnecessary files, such as `.gitignore` - will not be ignored, slowing the game down as it checks a bunch of useless files for meaningful data. This will also be problematic when trying to open the mod in the mod editor.
 
 To avoid this issue, it is recommended that you follow the following instructions to create a symbolic link, storing the actual repository outside the game's mod folder without any negative effects: (Credit goes to Darloth for the original idea at https://github.com/DaloLorn/Rising-Stars/issues/20, and Skeletonxf for the Linux version)
 
@@ -149,7 +153,7 @@ Q: When I try to use scripts from SR2MM 0.1.0, nothing happens!
 
 Q: The program displayed an error message when I tried to do X!
 
->A: Many of the error/warning messages in 1.0.0 come with a recommended solution or workaround. (The 'encountered an exception' message is a notable exception.) If this is not the case, or the solution didn't work, contact me. Some of the possible exceptions *might* be verbose enough that you can figure it out on your own, but I make no promises.
+>A: Many of the error/warning messages since 1.0.0 come with a recommended solution or workaround. (The 'encountered an exception' message is a notable exception.) If this is not the case, or the solution didn't work, contact me. Some of the possible exceptions *might* be verbose enough that you can figure it out on your own, but I make no promises.
 
 Q: Uhh, this isn't the mod I wanted. What's going on?
 
