@@ -7,6 +7,7 @@ import com.google.gson.reflect.TypeToken;
 import org.eclipse.jgit.api.CreateBranchCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ListBranchCommand;
+import org.eclipse.jgit.api.errors.RefNotAdvertisedException;
 import org.eclipse.jgit.errors.RepositoryNotFoundException;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectLoader;
@@ -321,6 +322,9 @@ public class RepositoryManager {
 			}
 
 			installModImpl(repo, warningHandler, progressHandler, infoHandler, errorHandler);
+		} catch (RefNotAdvertisedException e) {
+			errorHandler.handle("This branch or tag is no longer visible. It may have been deleted from the origin repository, or it may have been hidden somehow.\n\nThis may often be the case for branches used in beta testing or miscellaneous development; try another one, or contact the mod developers.");
+			e.printStackTrace();
 		} catch (Exception e) {
 			errorHandler.handle("Encountered an exception: " + e.toString());
 			e.printStackTrace();
