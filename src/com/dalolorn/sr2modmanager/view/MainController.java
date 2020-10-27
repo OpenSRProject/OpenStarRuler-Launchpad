@@ -1,5 +1,6 @@
 package com.dalolorn.sr2modmanager.view;
 
+import com.dalolorn.sr2modmanager.adapter.History;
 import com.dalolorn.sr2modmanager.adapter.RepositoryManager;
 import com.dalolorn.sr2modmanager.adapter.Settings;
 import javafx.application.Platform;
@@ -19,11 +20,14 @@ import java.util.List;
 public class MainController {
 	@FXML private TextField urlField;
 	@FXML private Label urlLabel;
+	@FXML private Label historyLabel;
 	@FXML private TextArea modInfo, branchInfo;
 	@FXML private ListView<String> branchList;
+	@FXML private ListView<String> historyList;
 
 	public void initialize() {
 		branchList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> setActiveBranch(newValue));
+		historyList.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> urlField.setText(newValue.intValue() >= 0 ? historyList.getItems().get(newValue.intValue()) : ""));
 
 		boolean needsConfig = true;
 		try {
@@ -37,6 +41,15 @@ public class MainController {
 			Alert msg = new Alert(Alert.AlertType.WARNING, "Could not detect Star Ruler 2 launchers! Please navigate to the root folder of your SR2 installation, containing the files 'Star Ruler 2.exe' and 'StarRuler2.sh'!");
 			msg.showAndWait();
 			setSR2Path((Window) null);
+		}
+
+		try {
+			History.load();
+			historyList.getItems().addAll(History.getInstance().history);
+		} catch (IOException e) {
+			Alert msg = new Alert(Alert.AlertType.ERROR, "Could not load history.json! Cause:"  + e.toString());
+			e.printStackTrace();
+			msg.showAndWait();
 		}
 	}
 
@@ -124,7 +137,17 @@ public class MainController {
 				updateMessage("Getting mod description...");
 				if(!getDescription(errorHandler)) return null;
 
-				Platform.runLater(() -> urlLabel.setText("Connected to " + repoURL));
+				Platform.runLater(() -> {
+					urlLabel.setText("Connected to " + repoURL);
+					try {
+						History.getInstance().addItem(repoURL);
+						historyList.getItems().setAll(History.getInstance().history);
+					} catch (IOException e) {
+						Alert msg = new Alert(Alert.AlertType.ERROR, "Could not save history.json! Cause:"  + e.toString());
+						e.printStackTrace();
+						msg.showAndWait();
+					}
+				});
 				return null;
 			}
 
