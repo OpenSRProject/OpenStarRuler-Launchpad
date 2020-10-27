@@ -1,6 +1,6 @@
 package com.dalolorn.sr2modmanager.view;
 
-import com.dalolorn.sr2modmanager.adapter.History;
+import com.dalolorn.sr2modmanager.adapter.Recommendation;
 import com.dalolorn.sr2modmanager.adapter.RepositoryManager;
 import com.dalolorn.sr2modmanager.adapter.Settings;
 import javafx.application.Platform;
@@ -20,14 +20,14 @@ import java.util.List;
 public class MainController {
 	@FXML private TextField urlField;
 	@FXML private Label urlLabel;
-	@FXML private Label historyLabel;
+	@FXML private Label recommendationLabel;
 	@FXML private TextArea modInfo, branchInfo;
 	@FXML private ListView<String> branchList;
-	@FXML private ListView<String> historyList;
+	@FXML private ListView<String> recommendationList;
 
 	public void initialize() {
 		branchList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> setActiveBranch(newValue));
-		historyList.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> urlField.setText(newValue.intValue() >= 0 ? historyList.getItems().get(newValue.intValue()) : ""));
+		recommendationList.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> urlField.setText(newValue.intValue() >= 0 ? recommendationList.getItems().get(newValue.intValue()) : ""));
 
 		boolean needsConfig = true;
 		try {
@@ -44,8 +44,8 @@ public class MainController {
 		}
 
 		try {
-			History.load();
-			historyList.getItems().addAll(History.getInstance().history);
+			Recommendation.load();
+			recommendationList.getItems().addAll(Recommendation.getInstance().getRecommendationList());
 		} catch (IOException e) {
 			Alert msg = new Alert(Alert.AlertType.ERROR, "Could not load history.json! Cause:"  + e.toString());
 			e.printStackTrace();
@@ -140,8 +140,8 @@ public class MainController {
 				Platform.runLater(() -> {
 					urlLabel.setText("Connected to " + repoURL);
 					try {
-						History.getInstance().addItem(repoURL);
-						historyList.getItems().setAll(History.getInstance().history);
+						Recommendation.getInstance().addItem(repoURL);
+						recommendationList.getItems().setAll(Recommendation.getInstance().getRecommendationList());
 					} catch (IOException e) {
 						Alert msg = new Alert(Alert.AlertType.ERROR, "Could not save history.json! Cause:"  + e.toString());
 						e.printStackTrace();

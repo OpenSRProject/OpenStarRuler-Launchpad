@@ -7,15 +7,24 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-public class History {
+public class Recommendation {
     public List<String> history = new ArrayList<>();
 
-    private History() {}
+    private Recommendation() {}
 
-    private static History instance = new History();
-    private static final int SIZE_LIMIT = 5;
+    private static Recommendation instance = new Recommendation();
+    private static final int HISTORY_SIZE_LIMIT = 5;
+    // I guess this could be in a file....
+    private static final List<String> RECOMMENDATIONS = Arrays.asList(
+            "https://github.com/DaloLorn/Rising-Stars",
+            "https://github.com/sol-oriens/Shores-of-Infinity",
+            "https://github.com/Skeletonxf/star-ruler-2-mod-ce",
+            "https://github.com/Vandaria/SR2-Lost-Sector",
+            "https://github.com/sol-oriens/SR2-Community-Patch"
+    );
 
     public static boolean load() throws IOException {
         File file = new File("history.json");
@@ -24,13 +33,13 @@ public class History {
             return false;
         } else {
             try (FileReader reader = new FileReader(file)) {
-                instance = new Gson().fromJson(reader, History.class);
+                instance = new Gson().fromJson(reader, Recommendation.class);
             }
         }
         return true;
     }
 
-    public static History getInstance() {
+    public static Recommendation getInstance() {
         return instance;
     }
 
@@ -55,10 +64,20 @@ public class History {
         history.remove(url);
 
         history.add(0, url);
-        while (history.size() > SIZE_LIMIT) {
-            history.remove(SIZE_LIMIT);
+        while (history.size() > HISTORY_SIZE_LIMIT) {
+            history.remove(HISTORY_SIZE_LIMIT);
         }
 		save();
 
+    }
+
+    public List<String> getRecommendationList() {
+        List<String> res = new ArrayList<>(history);
+        RECOMMENDATIONS.forEach(r -> {
+            if (!history.contains(r)) {
+                res.add(r);
+            }
+        });
+        return res;
     }
 }
