@@ -7,7 +7,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Recommendation {
@@ -17,14 +16,6 @@ public class Recommendation {
 
     private static Recommendation instance = new Recommendation();
     private static final int HISTORY_SIZE_LIMIT = 5;
-    // I guess this could be in a file....
-    private static final List<String> RECOMMENDATIONS = Arrays.asList(
-            "https://github.com/DaloLorn/Rising-Stars",
-            "https://github.com/sol-oriens/Shores-of-Infinity",
-            "https://github.com/Skeletonxf/star-ruler-2-mod-ce",
-            "https://github.com/Vandaria/SR2-Lost-Sector",
-            "https://github.com/sol-oriens/SR2-Community-Patch"
-    );
 
     public static boolean load() throws IOException {
         File file = new File("history.json");
@@ -72,12 +63,6 @@ public class Recommendation {
     }
 
     public List<String> getRecommendationList() {
-        List<String> res = new ArrayList<>(history);
-        RECOMMENDATIONS.forEach(r -> {
-            if (!history.contains(r)) {
-                res.add(r);
-            }
-        });
-        return res;
+        return history;
     }
 }

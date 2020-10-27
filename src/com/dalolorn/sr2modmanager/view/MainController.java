@@ -47,7 +47,7 @@ public class MainController {
 			Recommendation.load();
 			recommendationList.getItems().addAll(Recommendation.getInstance().getRecommendationList());
 		} catch (IOException e) {
-			Alert msg = new Alert(Alert.AlertType.ERROR, "Could not load history.json! Cause:"  + e.toString());
+			Alert msg = new Alert(Alert.AlertType.WARNING, "Could not load history.json! Cause:"  + e.toString());
 			e.printStackTrace();
 			msg.showAndWait();
 		}
@@ -143,7 +143,7 @@ public class MainController {
 						Recommendation.getInstance().addItem(repoURL);
 						recommendationList.getItems().setAll(Recommendation.getInstance().getRecommendationList());
 					} catch (IOException e) {
-						Alert msg = new Alert(Alert.AlertType.ERROR, "Could not save history.json! Cause:"  + e.toString());
+						Alert msg = new Alert(Alert.AlertType.WARNING, "Could not save history.json! Cause:"  + e.toString());
 						e.printStackTrace();
 						msg.showAndWait();
 					}
