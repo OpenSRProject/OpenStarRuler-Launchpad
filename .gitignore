@@ -7,3 +7,12 @@ config.json
 out
 repositories/*
 Thumbs.db
+build
+.gradle
+*.iml
+/.idea/*
+!/.idea/codeStyles/
+*.jar
+*.zip
+*.class
+!/gradle/wrapper/gradle-wrapper.jar
