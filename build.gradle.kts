@@ -1,5 +1,7 @@
 plugins {
     application
+    id("org.openjfx.javafxplugin") version "0.0.10"
+    id("org.beryx.jlink") version "2.24.0"
 }
 
 repositories {
@@ -12,9 +14,21 @@ dependencies {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 
+}
+
+javafx {
+    version = "11.0.2"
+    modules = mutableListOf("javafx.controls", "javafx.fxml")
+}
+
+jlink {
+    launcher {
+        name = "SR2ModManager"
+        noConsole = true
+    }
 }
 
 tasks.withType<JavaCompile> {
