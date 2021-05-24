@@ -7,7 +7,7 @@ repositories {
 }
 
 dependencies {
-    implementation("org.eclipse.jgit:org.eclipse.jgit:4.11.0.201803080745-r")
+    implementation("org.eclipse.jgit:org.eclipse.jgit:5.11.1.202105131744-r")
     implementation("com.google.code.gson:gson:2.8.6")
 }
 
