@@ -21,6 +21,10 @@ tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
 }
 
+tasks.withType<Jar> {
+    from(project.file("LICENSE.txt"))
+}
+
 var mainClass: String? by application.mainClass // dereference the Property
 mainClass = "com.dalolorn.sr2modmanager.view.Main"
 
@@ -31,7 +35,10 @@ application {
 distributions {
     main {
         contents {
-            from(project.file("README.md"))
+            from(project.file("README.md")) {
+                rename("README.md", "README.txt")
+            }
+            from(project.file("LICENSE.txt"))
         }
     }
 }
