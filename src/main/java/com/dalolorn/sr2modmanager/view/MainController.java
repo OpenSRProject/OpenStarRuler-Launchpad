@@ -29,12 +29,12 @@ public class MainController {
 		try {
 			needsConfig = !Settings.load();
 		} catch(IOException e) {
-			Alert msg = new Alert(Alert.AlertType.ERROR, "Could not load config.json! Cause:"  + e.toString());
+			Alert msg = new ResizableAlert(Alert.AlertType.ERROR, "Could not load config.json! Cause:"  + e.toString());
 			e.printStackTrace();
 			msg.showAndWait();
 		}
 		if(needsConfig || !new File(Settings.getInstance().gamePath, "Star Ruler 2.exe").exists() || !new File(Settings.getInstance().gamePath, "StarRuler2.sh").exists()) {
-			Alert msg = new Alert(Alert.AlertType.WARNING, "Could not detect Star Ruler 2 launchers! Please navigate to the root folder of your SR2 installation, containing the files 'Star Ruler 2.exe' and 'StarRuler2.sh'!");
+			Alert msg = new ResizableAlert(Alert.AlertType.WARNING, "Could not detect Star Ruler 2 launchers! Please navigate to the root folder of your SR2 installation, containing the files 'Star Ruler 2.exe' and 'StarRuler2.sh'!");
 			msg.showAndWait();
 			setSR2Path((Window) null);
 		}
@@ -60,7 +60,7 @@ public class MainController {
 		File winLauncher = new File(dir, "Star Ruler 2.exe");
 		File linuxLauncher = new File(dir, "StarRuler2.sh");
 		if(!winLauncher.exists() || !linuxLauncher.exists()) {
-			Alert msg = new Alert(Alert.AlertType.ERROR, "This is not the root directory of a Star Ruler 2 installation!");
+			Alert msg = new ResizableAlert(Alert.AlertType.ERROR, "This is not the root directory of a Star Ruler 2 installation!");
 			msg.showAndWait();
 			setSR2Path(dir, window);
 			return;
@@ -70,7 +70,7 @@ public class MainController {
 		try {
 			Settings.getInstance().save();
 		} catch (IOException e) {
-			Alert msg = new Alert(Alert.AlertType.WARNING, "Failed to save config file!");
+			Alert msg = new ResizableAlert(Alert.AlertType.WARNING, "Failed to save config file!");
 			msg.show();
 			e.printStackTrace();
 		}
@@ -104,7 +104,7 @@ public class MainController {
 			protected Void call() {
 				String repoURL;
 				RepositoryManager.TextHandler errorHandler = error -> Platform.runLater(() -> {
-					Alert msg = new Alert(Alert.AlertType.ERROR, error);
+					Alert msg = new ResizableAlert(Alert.AlertType.ERROR, error);
 					msg.show();
 				});
 
@@ -165,16 +165,16 @@ public class MainController {
 				updateMessage("Preparing to install mod...");
 				RepositoryManager.installMod(
 						warning -> Platform.runLater(() -> {
-							Alert msg = new Alert(Alert.AlertType.WARNING, warning);
+							Alert msg = new ResizableAlert(Alert.AlertType.WARNING, warning);
 							msg.show();
 						}),
 						this::updateMessage,
 						info -> Platform.runLater(() -> {
-							Alert msg = new Alert(Alert.AlertType.INFORMATION, info);
+							Alert msg = new ResizableAlert(Alert.AlertType.INFORMATION, info);
 							msg.show();
 						}),
 						error -> Platform.runLater(() -> {
-							Alert msg = new Alert(Alert.AlertType.ERROR, error);
+							Alert msg = new ResizableAlert(Alert.AlertType.ERROR, error);
 							msg.show();
 						})
 				);
@@ -250,7 +250,7 @@ public class MainController {
 			protected Void call() {
 				String repoURL;
 				RepositoryManager.TextHandler errorHandler = error -> Platform.runLater(() -> {
-					Alert msg = new Alert(Alert.AlertType.ERROR, error);
+					Alert msg = new ResizableAlert(Alert.AlertType.ERROR, error);
 					msg.show();
 				});
 
@@ -287,7 +287,7 @@ public class MainController {
 	}
 
 	@FXML private void close(ActionEvent actionEvent) {
-		Alert dialog = new Alert(Alert.AlertType.CONFIRMATION, "Quit SR2 Mod Manager?");
+		Alert dialog = new ResizableAlert(Alert.AlertType.CONFIRMATION, "Quit SR2 Mod Manager?");
 		ObservableList<ButtonType> dlgButtons = dialog.getDialogPane().getButtonTypes();
 		dlgButtons.clear();
 		dlgButtons.add(ButtonType.YES);
@@ -300,7 +300,7 @@ public class MainController {
 	}
 
 	@FXML private void deleteRepository(ActionEvent actionEvent) {
-		Alert dialog = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete this repository from your computer? You will not be able to access it again until you redownload it.");
+		Alert dialog = new ResizableAlert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete this repository from your computer? You will not be able to access it again until you redownload it.");
 		ObservableList<ButtonType> dlgButtons = dialog.getDialogPane().getButtonTypes();
 		dlgButtons.clear();
 		dlgButtons.add(ButtonType.YES);
@@ -311,7 +311,7 @@ public class MainController {
 				.filter(response -> response == ButtonType.YES)
 				.ifPresent(response -> {
 						if(RepositoryManager.deleteRepository(error -> {
-							Alert msg = new Alert(Alert.AlertType.ERROR, error);
+							Alert msg = new ResizableAlert(Alert.AlertType.ERROR, error);
 							msg.show();
 						})) {
 							branchList.getItems().clear();
@@ -322,7 +322,7 @@ public class MainController {
 	}
 
 	@FXML private void about(ActionEvent actionEvent) {
-		Alert msg = new Alert(Alert.AlertType.INFORMATION,
+		Alert msg = new ResizableAlert(Alert.AlertType.INFORMATION,
 				"SR2 Mod Manager by Dalo Lorn\n" +
 						"\n" +
 						"Version: 1.1.1\n\n" +
