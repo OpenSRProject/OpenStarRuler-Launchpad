@@ -27,7 +27,6 @@ javafx {
 jlink {
     launcher {
         name = "SR2ModManager"
-        noConsole = true
     }
 }
 
@@ -41,9 +40,21 @@ tasks.withType<Jar> {
 
 var mainClass: String? by application.mainClass // dereference the Property
 mainClass = "com.dalolorn.sr2modmanager.view.Main"
+var mainModule: String? by application.mainModule
+mainModule = "SR2ModManager"
 
 application {
     executableDir = ""
+}
+
+tasks.withType<CreateStartScripts> {
+    doLast {
+        var windowsText = windowsScript.readText()
+
+        windowsText = windowsText.replace(":fail\r\nrem", ":fail\r\npause\r\nrem")
+
+        windowsScript.writeText(windowsText)
+    }
 }
 
 distributions {
