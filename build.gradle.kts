@@ -52,6 +52,7 @@ distributions {
             from(project.file("README.md")) {
                 rename("README.md", "README.txt")
             }
+            from(project.file("history.json"))
             from(project.file("LICENSE.txt"))
         }
     }
