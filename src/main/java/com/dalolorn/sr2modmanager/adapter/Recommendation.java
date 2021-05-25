@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Recommendation {
-    public List<String> history = new ArrayList<>();
+    public static final List<String> history = new ArrayList<>();
 
     private Recommendation() {}
 

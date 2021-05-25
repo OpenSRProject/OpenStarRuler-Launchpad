@@ -17,32 +17,33 @@ The current version is a JavaFX GUI application, much more deserving of the 'man
 
 In order to run this application, you must first have a computer with all of the following:
 
-- Java Runtime Environment 1.8 (also known as Java 8)
-- JavaFX (or OpenJavaFX, if using OpenJDK) binaries compatible with Java 8
+- Java Runtime Environment 11 or newer (also known as Java 11). This is not required if you install the standalone version of SR2MM, but if possible, it is recommended that you use the standard version.
 - An Internet connection
 
 The current .zip download contains the following file structure:
 
 - SR2ModManager
-    - dependencies
-	    - *A folder containing a variety of .jar files required by the mod manager*
+    - lib (STANDARD VERSION ONLY)
+	    - *A folder containing a variety of .jar files required by the mod manager, including the manager itself. This is not present in the standalone version of SR2MM.*
+    - jre (STANDALONE VERSION ONLY)
+		- *A folder containing the mod manager and its runtime environment. This is not present in the standard version of SR2MM.*
 	- modmanager.bat
 	- modmanager.sh
-		- *A batch file which will start the mod manager (in case your computer doesn't know how to do it without hand-holding), as well as its Linux equivalent*
+		- *A batch file which will start the mod manager, as well as its Linux equivalent.*
+	- history.json
+		- *This file initially contains a list of 5 suggested repositories. As you connect to other repositories, the suggested repos will be gradually pushed out of the list to store the last 5 repos you opened.*
 	- README.md
 		- *You are here*
-	- SR2ModManager.jar
-		- *The mod manager itself*
 
-To install the mod manager, extract the `SR2ModManager` folder wherever you like. Ideally, this will be your Star Ruler 2 root directory (where `Star Ruler 2.exe` and `StarRuler2.sh` are located - and more importantly, where the `mods` folder is or *will be* located). This will allow it to download the mods directly into the game's mod folder, saving you the extra step of copying the files over yourself.
+To install the mod manager, extract the `SR2ModManager` folder wherever you like. Ideally, this will be your Star Ruler 2 root directory (where `Star Ruler 2.exe` and/or `StarRuler2.sh` are located - and more importantly, where the `mods` folder is or *will be* located). This will allow it to download the mods directly into the game's mod folder, saving you the extra step of copying the files over yourself.
 
 Note that as of v1.1.1, SR2MM is capable of relatively gracefully handling cases where it has been installed in the 'wrong' location. You will be asked to locate your SR2 folder, and the correct path will then be stored in a JSON config file. If you refuse, it will default to the the last stored location, or the relative path `..`. (You can bring up the dialog again at any time via 'Options->Set SR2 Path'.)
 
 ## Basic Use
 
-On Windows, your best bet is probably to run `modmanager.bat`. It avoids having to worry about whether Windows knows how to automatically run JAR files or not. (This is probably not a common issue, though.)
+On Windows, just run `SR2ModManager.bat` to run the application.
 
-On Linux, the equivalent action is to run `modmanager.sh`. (Whether this actually makes sense is anyone's guess.)
+On Linux, the equivalent action is to run `SR2ModManager`.
 
 To connect to a repository, enter its URL as if you were trying to access it via a browser, then press 'Connect'. If the protocol is omitted, SR2MM will default to HTTPS - similarly, if the `.git` file extension is missing, SR2MM will automatically append it to the URL. (Consequently, a link such as `github.com/DaloLorn/Rising-Stars` would be a perfectly valid way of accessing the Rising Stars repository.)
 
@@ -135,17 +136,31 @@ An example JSON containing descriptions for the `master` and `WorkshopBuild` bra
 
 ## Troubleshooting FAQ
 
-Q: My computer says `'java' is not recognized as an internal or external command, operable program or batch file.` or something like that!
+Q: What's the difference between the standalone and standard versions of SR2MM?
 
->A: You do not have Java installed, or it is not correctly installed. You will need to download whichever version of the Java Runtime Environment is appropriate for your operating system from http://www.oracle.com/technetwork/java/javase/downloads/index.html and try again.
+>A: The standard version is smaller and (theoretically) more secure, because it relies on your computer having Java 11+ installed. (The added security stems from the fact that, in theory, you will periodically be updating Java. In theory.)
+> 
+> However, if for whatever reason you are unable or unwilling to install Java 11+, the standalone version includes a stripped-down JRE sufficient to run SR2MM. None of the other differences have any practical meaning to you as a user, since they don't change how you run the application.  
 
-Q: I got this error: `Error: Could not find or load main class com.dalolorn.sr2modmanager.view.Main Caused by: java.lang.NoClassDefFoundError: javafx/application/Application` What now?
+Q: My computer gives me one of the following error messages:
+```
+ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
 
->A: You're using a newer version of Java. Right now, I'm not entirely clear on what your options are, except installing Java 8. Sorry. :/
+Please set the JAVA_HOME variable in your environment to match the location of your Java installation.
+```
+```
+ERROR: JAVA_HOME is set to an invalid directory: [VALUE OF JAVA_HOME]
+
+Please set the JAVA_HOME variable in your environment to match the location of your Java installation.
+```
+
+>A: You are using the standard version of SR2MM, and either you do not have Java installed, or it is not correctly installed. You will need to download whichever version of the Java Runtime Environment is appropriate for your operating system from [AdoptOpenJDK](https://adoptopenjdk.net) and try again. 
+> 
+> Take care to install Java 11 or newer, or you will still not be able to run SR2MM. Another option would be to download the standalone version of SR2MM, instead. 
 
 Q: Java gives me an error message when I try to run this!
 
->A: Make sure your computer is running Java 8 or newer, and has a matching version of JavaFX. If the error persists, contact me with the exact text of the error.
+>A: Make sure your computer is running Java 11 or newer, or download the standalone version of SR2MM instead of the standard version. If the error persists, contact me with the exact text of the error.
 
 Q: When I try to use scripts from SR2MM 0.1.0, nothing happens!
 
