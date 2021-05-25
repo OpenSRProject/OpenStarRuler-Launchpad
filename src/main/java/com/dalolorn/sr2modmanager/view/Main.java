@@ -26,7 +26,7 @@ public class Main extends Application {
 			primaryStage.setScene(scene);
 			primaryStage.show();
 		} catch (IOException e) {
-			Alert msg = new Alert(Alert.AlertType.ERROR, "Cannot load GUI, application will now terminate.");
+			Alert msg = new ResizableAlert(Alert.AlertType.ERROR, "Cannot load GUI, application will now terminate.");
 			e.printStackTrace();
 			msg.showAndWait().ifPresent(response -> {System.exit(-1);});
 		}
