@@ -16,3 +16,5 @@ build
 *.zip
 *.class
 !/gradle/wrapper/gradle-wrapper.jar
+scenicView.*
+.attach_pid*
