@@ -8,4 +8,5 @@ module SR2ModManager {
 	exports com.dalolorn.sr2modmanager.adapter;
 	exports com.dalolorn.sr2modmanager.model;
 	opens com.dalolorn.sr2modmanager.view;
+	opens com.dalolorn.sr2modmanager.adapter to com.google.gson;
 }
