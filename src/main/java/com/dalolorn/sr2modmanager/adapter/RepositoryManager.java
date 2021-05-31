@@ -4,10 +4,13 @@ import com.dalolorn.sr2modmanager.model.Metadata;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
+import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.CreateBranchCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ListBranchCommand;
+import org.eclipse.jgit.api.errors.JGitInternalException;
 import org.eclipse.jgit.api.errors.RefNotAdvertisedException;
+import org.eclipse.jgit.errors.NotSupportedException;
 import org.eclipse.jgit.errors.RepositoryNotFoundException;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectLoader;
@@ -79,6 +82,12 @@ public class RepositoryManager {
 
 		try {
 			progressHandler.handle("Parsing URL...");
+			if (url.equals("")) {
+				if (errorHandler != null) {
+					errorHandler.handle("URL field is empty! Cannot connect to the cold void of space.\n\nPlease enter the URL of the Git repository you want to connect to.");
+				}
+				return null;
+			}
 			url = parseRepoURL(url);
 			File localRoot = getLocalRoot(url);
 
@@ -87,10 +96,21 @@ public class RepositoryManager {
 			try {
 				tmp = Git.open(localRoot);
 			} catch (IOException e) {
-				tmp = Git.cloneRepository()
-						.setURI(url)
-						.setDirectory(localRoot)
-						.call();
+				CloneCommand cmd = Git.cloneRepository()
+						.setDirectory(localRoot);
+				try {
+					tmp = cmd.setURI(url)
+							.call();
+				} catch (Exception e2) {
+					// Apparently the Git protocol isn't yet supported by all Git servers.
+					// So if the clone failed, it might not mean an HTTPS clone would do the same.
+					if (url.startsWith("git://")) {
+						tmp = cmd.setURI(url.replace("git://", "https://"))
+								.call();
+					}
+					else throw e2;
+					e2.printStackTrace();
+				}
 			}
 			if(tmp != null) {
 				if(repo != null) repo.close();
@@ -98,8 +118,12 @@ public class RepositoryManager {
 			}
 			return url;
 		} catch (Exception e) {
-			if(errorHandler != null)
-				errorHandler.handle("Encountered an exception: " + e.toString());
+			if(errorHandler != null) {
+				if (e.getCause() instanceof NotSupportedException && e.getCause().getMessage().startsWith("URI not supported: "))
+					errorHandler.handle("Not a valid Git URL!\n\nThe URL provided isn't a valid Git URL.\n\nPlease make sure you entered the correct URL, and contact the SR2MM developers if the problem persists.");
+				else
+					errorHandler.handle("Encountered an exception: " + e.toString());
+			}
 			e.printStackTrace();
 			return null;
 		}
@@ -175,8 +199,8 @@ public class RepositoryManager {
 	}
 
 	private static String parseRepoURL(String url) {
-		if (!url.startsWith("http"))
-			url = "https://" + url;
+		if (!url.startsWith("http") && !url.startsWith("git://"))
+			url = "git://" + url;
 		if (!url.endsWith(".git"))
 			url += ".git";
 		return url;
@@ -258,6 +282,10 @@ public class RepositoryManager {
 	private static boolean installDependency(Metadata.Dependency dependency, TextHandler progressHandler, TextHandler warningHandler) {
 		try {
 			progressHandler.handle("Parsing URL for dependency \"" + dependency.name + "\"...");
+			if (dependency.repository.equals("")) {
+				warningHandler.handle(String.format("Failed to install dependency \"%s\": Dependency metadata doesn't specify a URL. The author may be playing a prank on his users.", dependency.name));
+				return false;
+			}
 			String url = parseRepoURL(dependency.repository);
 			File localRoot = getLocalRoot(url);
 
@@ -266,10 +294,21 @@ public class RepositoryManager {
 			try {
 				depRepo = Git.open(localRoot);
 			} catch (IOException e) {
-				depRepo = Git.cloneRepository()
-						.setURI(url)
-						.setDirectory(localRoot)
-						.call();
+				CloneCommand cmd = Git.cloneRepository()
+						.setDirectory(localRoot);
+				try {
+					depRepo = cmd.setURI(url)
+							.call();
+				} catch (Exception e2) {
+					// Apparently the Git protocol isn't yet supported by all Git servers.
+					// So if the clone failed, it might not mean an HTTPS clone would do the same.
+					if (url.startsWith("git://")) {
+						depRepo = cmd.setURI(url.replace("git://", "https://"))
+								.call();
+					}
+					else throw e2;
+					e2.printStackTrace();
+				}
 			}
 			depRepo.checkout()
 					.setName(dependency.branch)
@@ -293,7 +332,10 @@ public class RepositoryManager {
 			);
 			return true;
 		} catch (Exception e) {
-			warningHandler.handle(String.format("Failed to install dependency \"%s\": %s", dependency.name, e.toString()));
+			if (e.getCause() instanceof NotSupportedException && e.getCause().getMessage().startsWith("URI not supported: "))
+				warningHandler.handle(String.format("Failed to install dependency \"%s\": Not a valid Git URL!\n\nThe URL in the dependency metadata is not a valid Git URL.\n\nPlease contact the mod author and/or SR2MM developers.", dependency.name));
+			else
+				warningHandler.handle(String.format("Failed to install dependency \"%s\": %s", dependency.name, e.toString()));
 			e.printStackTrace();
 			return false;
 		}

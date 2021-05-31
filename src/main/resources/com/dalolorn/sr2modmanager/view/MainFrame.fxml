@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dalolorn.sr2modmanager.view.MainController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dalolorn.sr2modmanager.view.MainController">
     <top>
         <MenuBar>
             <Menu mnemonicParsing="false" text="File">
@@ -53,7 +53,7 @@
                         <Insets />
                     </VBox.margin>
                     <Button fx:id="connectButton" mnemonicParsing="false" onAction="#connectToRepository" text="Connect" GridPane.halignment="CENTER" />
-                    <Button fx:id="installButton" contentDisplay="CENTER" mnemonicParsing="false" onAction="#installMod" text="Install" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
+                    <Button fx:id="installButton" contentDisplay="CENTER" disable="true" mnemonicParsing="false" onAction="#installMod" text="Install" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
                 </HBox>
                 <Label fx:id="recommendationLabel" alignment="CENTER" contentDisplay="CENTER" text="Suggested repositories:" wrapText="true">
                     <VBox.margin>

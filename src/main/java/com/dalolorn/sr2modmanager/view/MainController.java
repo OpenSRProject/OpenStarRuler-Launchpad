@@ -18,6 +18,8 @@ import java.io.*;
 import java.util.List;
 
 public class MainController {
+	@FXML private Button connectButton;
+	@FXML private Button installButton;
 	@FXML private TextField urlField;
 	@FXML private Label urlLabel;
 	@FXML private Label recommendationLabel;
@@ -37,8 +39,8 @@ public class MainController {
 			e.printStackTrace();
 			msg.showAndWait();
 		}
-		if(needsConfig || !new File(Settings.getInstance().gamePath, "Star Ruler 2.exe").exists() || !new File(Settings.getInstance().gamePath, "StarRuler2.sh").exists()) {
-			Alert msg = new ResizableAlert(Alert.AlertType.WARNING, "Could not detect Star Ruler 2 launchers! Please navigate to the root folder of your SR2 installation, containing the files 'Star Ruler 2.exe' and 'StarRuler2.sh'!");
+		if(needsConfig || (!new File(Settings.getInstance().gamePath, "Star Ruler 2.exe").exists() && !new File(Settings.getInstance().gamePath, "StarRuler2.sh").exists())) {
+			Alert msg = new ResizableAlert(Alert.AlertType.WARNING, "Could not detect Star Ruler 2 launchers! Please navigate to the root folder of your SR2 installation, containing the files 'Star Ruler 2.exe' and/or 'StarRuler2.sh'!");
 			msg.showAndWait();
 			setSR2Path((Window) null);
 		}
@@ -72,7 +74,7 @@ public class MainController {
 			return;
 		File winLauncher = new File(dir, "Star Ruler 2.exe");
 		File linuxLauncher = new File(dir, "StarRuler2.sh");
-		if(!winLauncher.exists() || !linuxLauncher.exists()) {
+		if(!winLauncher.exists() && !linuxLauncher.exists()) {
 			Alert msg = new ResizableAlert(Alert.AlertType.ERROR, "This is not the root directory of a Star Ruler 2 installation!");
 			msg.showAndWait();
 			setSR2Path(dir, window);
@@ -91,6 +93,7 @@ public class MainController {
 
 	private void setActiveBranch(String branchName) {
 		branchInfo.setText(RepositoryManager.setActiveBranch(branchName));
+		installButton.setDisable(RepositoryManager.currentBranch == null);
 	}
 
 	@FXML private void connectToRepository(ActionEvent event) {

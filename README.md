@@ -45,7 +45,7 @@ On Windows, just run `SR2ModManager.bat` to run the application.
 
 On Linux, the equivalent action is to run `SR2ModManager`.
 
-To connect to a repository, enter its URL as if you were trying to access it via a browser, then press 'Connect'. If the protocol is omitted, SR2MM will default to HTTPS - similarly, if the `.git` file extension is missing, SR2MM will automatically append it to the URL. (Consequently, a link such as `github.com/DaloLorn/Rising-Stars` would be a perfectly valid way of accessing the Rising Stars repository.)
+To connect to a repository, enter its URL as if you were trying to access it via a browser, then press 'Connect'. If the protocol is omitted, SR2MM will default to `git://` - similarly, if the `.git` file extension is missing, SR2MM will automatically append it to the URL. (Consequently, a link such as `github.com/DaloLorn/Rising-Stars` would be a perfectly valid way of accessing the Rising Stars repository.)
 
 You can also open a previously downloaded repository by using 'File->Open' and selecting the desired repository folder. (For instance, the Rising Stars repository would be stored in `DaloLorn_Rising-Stars`.)
 
