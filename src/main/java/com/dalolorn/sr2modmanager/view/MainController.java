@@ -64,7 +64,7 @@ public class MainController {
 	}
 
 	@FXML private void setSR2Path(ActionEvent event) {
-		setSR2Path(new File(Settings.getInstance().gamePath), urlField.getScene().getWindow());
+		setSR2Path(urlField.getScene().getWindow());
 	}
 
 	private void setSR2Path(Window window) {
