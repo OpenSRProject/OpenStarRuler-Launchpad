@@ -7,6 +7,7 @@ import org.eclipse.jgit.treewalk.TreeWalk;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Locale;
 
 /** Utility class containing a number of helper functions. */
 public class Utils {
@@ -50,6 +51,8 @@ public class Utils {
 
 		return result;
 	}
+
+	public static final boolean isWindows = System.getProperty("os.name").toLowerCase(Locale.ROOT).trim().startsWith("win");
 
 	/** Iterates through a list of likely readme names. I'd use case-insensitive filtering, but I don't fancy figuring out how to write a case-insensitive version of PathFilter. */
 	static TreeWalk generateReadmeWalker(Repository repo, ObjectId tree) throws FileNotFoundException {

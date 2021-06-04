@@ -3,6 +3,7 @@ package com.dalolorn.sr2modmanager.view;
 import com.dalolorn.sr2modmanager.adapter.Recommendation;
 import com.dalolorn.sr2modmanager.adapter.RepositoryManager;
 import com.dalolorn.sr2modmanager.adapter.Settings;
+import com.dalolorn.sr2modmanager.adapter.Utils;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -11,19 +12,29 @@ import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.*;
+import javafx.stage.Window;
 
 import java.io.*;
 import java.util.List;
 
 public class MainController {
+	// Shared UI components.
+	@FXML private Button playButton;
+
+	// Mod installer tab.
 	@FXML private Button connectButton;
 	@FXML private Button installButton;
 	@FXML private TextField urlField;
 	@FXML private Label urlLabel;
 	@FXML private Label recommendationLabel;
-	@FXML private TextArea modInfo, branchInfo;
+	@FXML private TextArea modInfo;
+	@FXML private TextArea branchInfo;
 	@FXML private ListView<String> branchList;
 	@FXML private ListView<String> recommendationList;
 
@@ -31,16 +42,16 @@ public class MainController {
 		branchList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> setActiveBranch(newValue));
 		recommendationList.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> urlField.setText(newValue.intValue() >= 0 ? recommendationList.getItems().get(newValue.intValue()) : ""));
 
-		boolean needsConfig = true;
+		var needsConfig = true;
 		try {
 			needsConfig = !Settings.load();
 		} catch(IOException e) {
-			Alert msg = new ResizableAlert(Alert.AlertType.ERROR, "Could not load config.json! Cause:"  + e.toString());
+			Alert msg = new ResizableAlert(Alert.AlertType.ERROR, "Could not load config.json! Cause:"  + e);
 			e.printStackTrace();
 			msg.showAndWait();
 		}
 		if(needsConfig || (!new File(Settings.getInstance().gamePath, "Star Ruler 2.exe").exists() && !new File(Settings.getInstance().gamePath, "StarRuler2.sh").exists())) {
-			Alert msg = new ResizableAlert(Alert.AlertType.WARNING, "Could not detect Star Ruler 2 launchers! Please navigate to the root folder of your SR2 installation, containing the files 'Star Ruler 2.exe' and/or 'StarRuler2.sh'!");
+			var msg = new ResizableAlert(Alert.AlertType.WARNING, "Could not detect Star Ruler 2 launchers! Please navigate to the root folder of your SR2 installation, containing the files 'Star Ruler 2.exe' and/or 'StarRuler2.sh'!");
 			msg.showAndWait();
 			setSR2Path((Window) null);
 		}
@@ -49,7 +60,7 @@ public class MainController {
 			Recommendation.load();
 			recommendationList.getItems().addAll(Recommendation.getInstance().getRecommendationList());
 		} catch (IOException e) {
-			Alert msg = new Alert(Alert.AlertType.WARNING, "Could not load history.json! Cause:"  + e.toString());
+			var msg = new Alert(Alert.AlertType.WARNING, "Could not load history.json! Cause:"  + e);
 			e.printStackTrace();
 			msg.showAndWait();
 		}
@@ -60,11 +71,12 @@ public class MainController {
 	}
 
 	private void setSR2Path(Window window) {
+		playButton.setDisable(true);
 		setSR2Path(new File(Settings.getInstance().gamePath), window);
 	}
 
 	private void setSR2Path(File initialDirectory, Window window) {
-		DirectoryChooser chooser = new DirectoryChooser();
+		var chooser = new DirectoryChooser();
 		chooser.setInitialDirectory(initialDirectory);
 		if(!chooser.getInitialDirectory().exists())
 			chooser.setInitialDirectory(new File("."));
@@ -72,9 +84,8 @@ public class MainController {
 		File dir = chooser.showDialog(window);
 		if(dir == null || !dir.exists())
 			return;
-		File winLauncher = new File(dir, "Star Ruler 2.exe");
-		File linuxLauncher = new File(dir, "StarRuler2.sh");
-		if(!winLauncher.exists() && !linuxLauncher.exists()) {
+		var launcher = new File(dir, Utils.isWindows ? "Star Ruler 2.exe" : "StarRuler2.sh");
+		if(!launcher.exists()) {
 			Alert msg = new ResizableAlert(Alert.AlertType.ERROR, "This is not the root directory of a Star Ruler 2 installation!");
 			msg.showAndWait();
 			setSR2Path(dir, window);
@@ -82,6 +93,7 @@ public class MainController {
 		}
 
 		Settings.getInstance().gamePath = dir.getAbsolutePath();
+		playButton.setDisable(false);
 		try {
 			Settings.getInstance().save();
 		} catch (IOException e) {
@@ -96,26 +108,36 @@ public class MainController {
 		installButton.setDisable(RepositoryManager.currentBranch == null);
 	}
 
-	@FXML private void connectToRepository(ActionEvent event) {
-		// Start preparing the download task.
-		final double wndwWidth = 400.0d;
-		Label updateLabel = new Label("Loading repository...");
-		updateLabel.setPrefWidth(wndwWidth-20);
-		updateLabel.setWrapText(true);
-		ProgressBar progress = new ProgressBar();
+	private void executeTask(String initialText, final Function<Stage, Task<Void>> taskBuilder) {
+		// Start preparing the task.
+		final var wndwWidth = 400.0d;
+		var taskLabel = new Label(initialText);
+		taskLabel.setPrefWidth(wndwWidth-20);
+		taskLabel.setWrapText(true);
+		var progress = new ProgressBar();
 		progress.setPrefWidth(wndwWidth);
 
-		VBox updatePane = new VBox();
-		updatePane.setPadding(new Insets(10, 10, 30, 10));
-		updatePane.setSpacing(5.0d);
-		updatePane.getChildren().addAll(updateLabel, progress);
+		var taskPane = new VBox();
+		taskPane.setPadding(new Insets(10, 10, 30, 10));
+		taskPane.setSpacing(5.0d);
+		taskPane.getChildren().addAll(taskLabel, progress);
 
-		Stage taskUpdateStage = new Stage(StageStyle.UTILITY);
-		taskUpdateStage.initModality(Modality.APPLICATION_MODAL);
-		taskUpdateStage.setScene(new Scene(updatePane));
-		taskUpdateStage.show();
+		var taskStage = new Stage(StageStyle.UTILITY);
+		taskStage.initModality(Modality.APPLICATION_MODAL);
+		taskStage.setScene(new Scene(taskPane));
+		taskStage.show();
 
-		Task updateTask = new Task<Void>() {
+		Task<Void> task = taskBuilder.apply(taskStage);
+
+		progress.progressProperty().bind(task.progressProperty());
+		taskLabel.textProperty().bind(task.messageProperty());
+
+		taskStage.show();
+		new Thread(task).start();
+	}
+
+	@FXML private void connectToRepository(ActionEvent event) {
+		executeTask("Loading repository...", taskUpdateStage -> new Task<>() {
 			@Override
 			protected Void call() {
 				String repoURL;
@@ -125,13 +147,13 @@ public class MainController {
 				});
 
 				if (
-					(repoURL = RepositoryManager.connectToRepository
-						(
-							urlField.getText(),
-							this::updateMessage,
-							errorHandler
-						)
-					) == null
+						(repoURL = RepositoryManager.connectToRepository
+								(
+										urlField.getText(),
+										this::updateMessage,
+										errorHandler
+								)
+						) == null
 				) return null;
 
 				updateMessage("Fetching branch list...");
@@ -146,7 +168,7 @@ public class MainController {
 						Recommendation.getInstance().addItem(repoURL);
 						recommendationList.getItems().setAll(Recommendation.getInstance().getRecommendationList());
 					} catch (IOException e) {
-						Alert msg = new Alert(Alert.AlertType.WARNING, "Could not save history.json! Cause:"  + e.toString());
+						Alert msg = new Alert(Alert.AlertType.WARNING, "Could not save history.json! Cause:"  + e);
 						e.printStackTrace();
 						msg.showAndWait();
 					}
@@ -158,34 +180,11 @@ public class MainController {
 			protected void succeeded() {
 				taskUpdateStage.close();
 			}
-		};
-
-		progress.progressProperty().bind(updateTask.progressProperty());
-		updateLabel.textProperty().bind(updateTask.messageProperty());
-
-		taskUpdateStage.show();
-		new Thread(updateTask).start();
+		});
 	}
 
 	@FXML private void installMod(ActionEvent event) {
-		// Start preparing the install task.
-		final double wndwWidth = 400.0d;
-		Label installLabel = new Label("Preparing to install mod...");
-		installLabel.setPrefWidth(wndwWidth-20);
-		installLabel.setWrapText(true);
-		ProgressBar progress = new ProgressBar();
-		progress.setPrefWidth(wndwWidth);
-
-		VBox installPane = new VBox();
-		installPane.setPadding(new Insets(10, 10, 30, 10));
-		installPane.setSpacing(5.0d);
-		installPane.getChildren().addAll(installLabel, progress);
-
-		Stage taskInstallStage = new Stage(StageStyle.UTILITY);
-		taskInstallStage.initModality(Modality.APPLICATION_MODAL);
-		taskInstallStage.setScene(new Scene(installPane));
-		taskInstallStage.show();
-		Task installTask = new Task<Void>() {
+		executeTask("Preparing to install mod...", taskInstallStage -> new Task<>() {
 			@Override
 			protected Void call() {
 				updateMessage("Preparing to install mod...");
@@ -211,13 +210,7 @@ public class MainController {
 			protected void succeeded() {
 				taskInstallStage.close();
 			}
-		};
-
-		progress.progressProperty().bind(installTask.progressProperty());
-		installLabel.textProperty().bind(installTask.messageProperty());
-
-		taskInstallStage.show();
-		new Thread(installTask).start();
+		});
 	}
 
 	private boolean getBranches(RepositoryManager.TextHandler errorHandler) {
@@ -245,7 +238,7 @@ public class MainController {
 
 	@FXML private void openRepository(ActionEvent actionEvent) {
 		// Get repository location.
-		DirectoryChooser chooser = new DirectoryChooser();
+		var chooser = new DirectoryChooser();
 		chooser.setInitialDirectory(new File("repositories/"));
 		chooser.getInitialDirectory().mkdirs();
 		chooser.setTitle("Choose a Repository");
@@ -253,25 +246,7 @@ public class MainController {
 		if(dir == null)
 			return;
 
-		// Start preparing the download task.
-		final double wndwWidth = 400.0d;
-		Label updateLabel = new Label("Loading repository...");
-		updateLabel.setPrefWidth(wndwWidth-20);
-		updateLabel.setWrapText(true);
-		ProgressBar progress = new ProgressBar();
-		progress.setPrefWidth(wndwWidth);
-
-		VBox updatePane = new VBox();
-		updatePane.setPadding(new Insets(10, 10, 30, 10));
-		updatePane.setSpacing(5.0d);
-		updatePane.getChildren().addAll(updateLabel, progress);
-
-		Stage taskUpdateStage = new Stage(StageStyle.UTILITY);
-		taskUpdateStage.initModality(Modality.APPLICATION_MODAL);
-		taskUpdateStage.setScene(new Scene(updatePane));
-		taskUpdateStage.show();
-
-		Task updateTask = new Task<Void>() {
+		executeTask("Loading repository...", taskUpdateStage -> new Task<>() {
 			@Override
 			protected Void call() {
 				String repoURL;
@@ -303,17 +278,11 @@ public class MainController {
 			protected void succeeded() {
 				taskUpdateStage.close();
 			}
-		};
-
-		progress.progressProperty().bind(updateTask.progressProperty());
-		updateLabel.textProperty().bind(updateTask.messageProperty());
-
-		taskUpdateStage.show();
-		new Thread(updateTask).start();
+		});
 	}
 
 	@FXML private void close(ActionEvent actionEvent) {
-		Alert dialog = new ResizableAlert(Alert.AlertType.CONFIRMATION, "Quit SR2 Mod Manager?");
+		var dialog = new ResizableAlert(Alert.AlertType.CONFIRMATION, "Quit SR2 Mod Manager?");
 		ObservableList<ButtonType> dlgButtons = dialog.getDialogPane().getButtonTypes();
 		dlgButtons.clear();
 		dlgButtons.add(ButtonType.YES);
@@ -326,7 +295,7 @@ public class MainController {
 	}
 
 	@FXML private void deleteRepository(ActionEvent actionEvent) {
-		Alert dialog = new ResizableAlert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete this repository from your computer? You will not be able to access it again until you redownload it.");
+		var dialog = new ResizableAlert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete this repository from your computer? You will not be able to access it again until you redownload it.");
 		ObservableList<ButtonType> dlgButtons = dialog.getDialogPane().getButtonTypes();
 		dlgButtons.clear();
 		dlgButtons.add(ButtonType.YES);
@@ -357,5 +326,29 @@ public class MainController {
 						"Patreon: https://patreon.com/rising_stars_sr2");
 		msg.setHeaderText("About SR2 Mod Manager");
 		msg.show();
+	}
+
+	@FXML private void startGame(ActionEvent actionEvent) {
+		var launcher = new File(Settings.getInstance().gamePath, Utils.isWindows ? "Star Ruler 2.exe" : "StarRuler2.sh");
+		if(!launcher.exists())
+			new ResizableAlert(Alert.AlertType.ERROR,
+					"Cannot start Star Ruler 2: Couldn't find platform-appropriate loader!")
+					.showAndWait();
+
+		if(!launcher.canExecute())
+			new ResizableAlert(Alert.AlertType.ERROR,
+					"Cannot start Star Ruler 2: Couldn't run game loader!")
+					.showAndWait();
+
+		try {
+			new ProcessBuilder(launcher.getAbsolutePath())
+				.directory(launcher.getParentFile())
+				.start();
+		} catch (Exception e) {
+			var msg = new ResizableAlert(Alert.AlertType.ERROR,
+					String.format("Cannot start Star Ruler 2: %s", e));
+			e.printStackTrace();
+			msg.showAndWait();
+		}
 	}
 }
