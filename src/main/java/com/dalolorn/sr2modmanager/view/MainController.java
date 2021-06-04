@@ -12,16 +12,13 @@ import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.*;
-import javafx.stage.Window;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import java.util.function.Function;
 
 public class MainController {
 	// Shared UI components.
@@ -350,5 +347,9 @@ public class MainController {
 			e.printStackTrace();
 			msg.showAndWait();
 		}
+	}
+
+	public void installOpenSR(ActionEvent actionEvent) {
+
 	}
 }
