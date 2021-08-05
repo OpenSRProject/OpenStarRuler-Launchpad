@@ -1,5 +1,8 @@
 package com.dalolorn.sr2modmanager.adapter;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -7,21 +10,27 @@ import java.nio.file.attribute.BasicFileAttributes;
 import static java.nio.file.FileVisitResult.CONTINUE;
 
 public abstract class Finder<T> extends SimpleFileVisitor<Path> {
-	protected final PathMatcher matcher;
+	@NotNull protected final PathMatcher matcher;
 
-	Finder(String pattern) {
+	Finder(@NotNull String pattern) {
 		matcher = FileSystems.getDefault()
 				.getPathMatcher("glob:" + pattern);
 	}
 
+	@Nullable
 	protected abstract T find(Path file);
 
+	@Nullable
 	public abstract T getResult();
 
 	// Invoke the pattern matching
 	// method on each file.
 	@Override
-	public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+	@NotNull
+	public FileVisitResult visitFile(
+			@NotNull Path file,
+			@NotNull BasicFileAttributes attrs
+	) {
 		if(find(file) != null)
 			return FileVisitResult.TERMINATE;
 		return CONTINUE;
@@ -30,14 +39,22 @@ public abstract class Finder<T> extends SimpleFileVisitor<Path> {
 	// Invoke the pattern matching
 	// method on each directory.
 	@Override
-	public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
+	@NotNull
+	public FileVisitResult preVisitDirectory(
+			@NotNull Path dir,
+			@NotNull BasicFileAttributes attrs
+	) {
 		if(find(dir) != null)
 			return FileVisitResult.TERMINATE;
 		return CONTINUE;
 	}
 
 	@Override
-	public FileVisitResult visitFileFailed(Path file, IOException exc) {
+	@NotNull
+	public FileVisitResult visitFileFailed(
+			@NotNull Path file,
+			@NotNull IOException exc
+	) {
 		System.err.println(exc);
 		return CONTINUE;
 	}

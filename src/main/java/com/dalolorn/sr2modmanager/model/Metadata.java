@@ -1,6 +1,7 @@
 package com.dalolorn.sr2modmanager.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Metadata {
 	public static class Dependency {
@@ -9,5 +10,5 @@ public class Metadata {
 		public String branch;
 	}
 
-	public ArrayList<Dependency> dependencies = new ArrayList<>();
+	public List<Dependency> dependencies = new ArrayList<>();
 }

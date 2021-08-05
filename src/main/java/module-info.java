@@ -4,6 +4,8 @@ module SR2ModManager {
 	requires com.google.gson;
 	requires org.eclipse.jgit;
 	requires java.desktop;
+	requires static org.jetbrains.annotations;
+	requires java.security.jgss;
 
 	exports com.dalolorn.sr2modmanager.adapter;
 	exports com.dalolorn.sr2modmanager.model;

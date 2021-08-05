@@ -1,8 +1,11 @@
 package com.dalolorn.sr2modmanager.adapter;
 
-import java.nio.file.*;
+import org.jetbrains.annotations.Nullable;
+
+import java.nio.file.Path;
 
 public class SingleFinder extends Finder<Path> {
+	@Nullable
 	private Path result;
 
 	public SingleFinder(String pattern) {
@@ -11,6 +14,7 @@ public class SingleFinder extends Finder<Path> {
 
 	// Compares the glob pattern against
 	// the file or directory name.
+	@Nullable
 	protected Path find(Path file) {
 		Path name = file.getFileName();
 		if (name != null && matcher.matches(name)) {
@@ -21,6 +25,7 @@ public class SingleFinder extends Finder<Path> {
 	}
 
 	// Returns the result.
+	@Nullable
 	public Path getResult() {
 		return result;
 	}

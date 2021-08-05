@@ -1,6 +1,7 @@
 package com.dalolorn.sr2modmanager.adapter;
 
 import com.google.gson.Gson;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileReader;
@@ -10,37 +11,38 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Recommendation {
-    public static final List<String> history = new ArrayList<>();
+    public final List<String> history = new ArrayList<>();
 
     private Recommendation() {}
 
-    private static Recommendation instance = new Recommendation();
+    @NotNull private static Recommendation instance = new Recommendation();
     private static final int HISTORY_SIZE_LIMIT = 5;
 
     public static boolean load() throws IOException {
-        File file = new File("history.json");
+        var file = new File("history.json");
         if (!file.exists()) {
             getInstance().save();
             return false;
         } else {
-            try (FileReader reader = new FileReader(file)) {
+            try (var reader = new FileReader(file)) {
                 instance = new Gson().fromJson(reader, Recommendation.class);
             }
         }
         return true;
     }
 
+    @NotNull
     public static Recommendation getInstance() {
         return instance;
     }
 
     public void save() throws IOException {
-        File file = new File("history.json");
+        var file = new File("history.json");
         if (!file.exists()) {
             file.createNewFile();
         }
 
-        try (FileWriter writer = new FileWriter(file, false)) {
+        try (var writer = new FileWriter(file, false)) {
             writer.write(new Gson().toJson(this));
         }
     }
