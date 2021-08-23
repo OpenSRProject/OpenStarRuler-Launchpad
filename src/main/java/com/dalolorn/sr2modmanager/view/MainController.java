@@ -14,7 +14,8 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.*;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 public class MainController {
@@ -351,7 +352,7 @@ public class MainController {
 		Alert msg = new ResizableAlert(Alert.AlertType.INFORMATION,
 				"SR2 Mod Manager by Dalo Lorn\n" +
 						"\n" +
-						"Version: 1.1.1\n\n" +
+						"Version: 1.2.0\n\n" +
 						"GitHub: https://github.com/DaloLorn/SR2ModManager\n" +
 						"Discord: https://discord.gg/sUJKJDc\n" +
 						"Patreon: https://patreon.com/rising_stars_sr2");
