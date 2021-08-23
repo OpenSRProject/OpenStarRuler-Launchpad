@@ -33,7 +33,7 @@ public class ModInstaller {
 	public static final String ENCOUNTERED_AN_EXCEPTION = "Encountered an exception: ";
 	public static final String PROTOCOL_GIT = "git://";
 	public static final String PROTOCOL_HTTPS = "https://";
-	public static final String NO_MOD_DESC = "No description could be found for this mod.";
+	public static final String NO_REPO_DESC = "No description could be found for this repository.";
 
 	private static Git repo;
 
@@ -204,7 +204,7 @@ public class ModInstaller {
 			var description = Utils.readGitFile(readmeLoader);
 			if (description != null)
 				return description;
-			else return NO_MOD_DESC;
+			else return NO_REPO_DESC;
 		} catch (Exception e) {
 			if(errorHandler != null)
 				errorHandler.handle(ENCOUNTERED_AN_EXCEPTION + e);
@@ -302,7 +302,7 @@ public class ModInstaller {
 				if(warningHandler != null)
 					warningHandler.handle("WARNING: Unable to discard repository metadata!\n\nTo improve loading times, it is recommended that you delete the installed mod's .git folder once installation is completed.");
 			}
-			return new Modinfo(inRoot, mod);
+			return new Modinfo(inRoot, mod, finder.getResult().toFile());
 		}
 		else {
 			return null;

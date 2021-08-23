@@ -4,11 +4,7 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<ModInstallerPane xmlns="http://javafx.com/javafx/11.0.2"
-                  xmlns:fx="http://javafx.com/fxml/1"
-                  fx:controller="com.dalolorn.sr2modmanager.view.ModInstallerPane"
-                  prefHeight="400"
-                  prefWidth="600">
+<ModInstallerPane prefHeight="400" prefWidth="750.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dalolorn.sr2modmanager.view.ModInstallerPane">
     <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
@@ -17,7 +13,19 @@
         <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
         <RowConstraints minHeight="10.0" percentHeight="55.0" vgrow="SOMETIMES" />
     </rowConstraints>
-    <ListView fx:id="branchList" prefHeight="275.0" prefWidth="300.0" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER" />
+   <GridPane gridLinesVisible="true" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER">
+      <columnConstraints>
+         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+      </columnConstraints>
+      <rowConstraints>
+         <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+      </rowConstraints>
+      <children>
+          <ListView fx:id="branchList" prefHeight="275.0" prefWidth="300.0" visible="false" GridPane.columnIndex="0" />
+          <ListView fx:id="modList" prefHeight="275.0" prefWidth="300.0" GridPane.columnIndex="1" />
+      </children>
+   </GridPane>
     <VBox alignment="CENTER" fillWidth="false" spacing="5.0" GridPane.columnIndex="1" GridPane.vgrow="NEVER">
         <padding>
             <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />

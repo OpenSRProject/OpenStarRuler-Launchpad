@@ -3,17 +3,17 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.BorderPane?>
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dalolorn.sr2modmanager.view.MainController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dalolorn.sr2modmanager.view.MainController">
     <top>
         <MenuBar>
             <Menu mnemonicParsing="false" text="File">
-                <MenuItem mnemonicParsing="false" onAction="#openRepository" text="Open Mod Repository" fx:id="openRepositoryItem"/>
+                <MenuItem fx:id="openRepositoryItem" mnemonicParsing="false" onAction="#openRepository" text="Open Mod Repository" />
                 <SeparatorMenuItem mnemonicParsing="false" />
-                <MenuItem mnemonicParsing="false" onAction="#close" text="Close"/>
+                <MenuItem mnemonicParsing="false" onAction="#close" text="Close" />
             </Menu>
             <Menu mnemonicParsing="false" text="Edit">
-                <MenuItem mnemonicParsing="false" onAction="#deleteRepository" text="Delete Mod Repository" fx:id="deleteRepositoryItem" disable="true"/>
-                <MenuItem mnemonicParsing="false" onAction="#uninstallMod" text="Uninstall Mod" fx:id="uninstallModItem" disable="true"/>
+                <MenuItem fx:id="deleteRepositoryItem" disable="true" mnemonicParsing="false" onAction="#deleteRepository" text="Delete Mod Repository" />
+                <MenuItem fx:id="uninstallModItem" disable="true" mnemonicParsing="false" onAction="#uninstallMod" text="Uninstall Mod" />
             </Menu>
             <Menu mnemonicParsing="false" text="Options">
                 <MenuItem mnemonicParsing="false" onAction="#setSR2Path" text="Set SR2 Path" />
@@ -25,14 +25,14 @@
     </top>
     <center>
         <TabPane fx:id="tabs">
-            <Tab text="Manage Mods" fx:id="modsTab">
-                <fx:include source="ModManager.fxml" fx:id="modsPane"/>
+            <Tab fx:id="modsTab" text="Manage Mods">
+                <fx:include fx:id="modsPane" source="ModManager.fxml" />
             </Tab>
-            <Tab text="Install Mods" fx:id="installerTab">
-                <fx:include source="ModInstaller.fxml" fx:id="installerPane"/>
+            <Tab fx:id="installerTab" text="Install Mods">
+                <fx:include fx:id="installerPane" source="ModInstaller.fxml" />
             </Tab>
-            <Tab text="Manage OpenSR" fx:id="osrTab">
-                <fx:include source="OpenSRManager.fxml" fx:id="osrPane"/>
+            <Tab fx:id="osrTab" text="Manage OpenSR">
+                <fx:include fx:id="osrPane" source="OpenSRManager.fxml" />
             </Tab>
         </TabPane>
     </center>
