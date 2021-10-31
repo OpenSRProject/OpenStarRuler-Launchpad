@@ -18,3 +18,5 @@ build
 !/gradle/wrapper/gradle-wrapper.jar
 scenicView.*
 .attach_pid*
+.project
+.settings
