@@ -1,7 +1,7 @@
 plugins {
     application
     id("org.openjfx.javafxplugin") version "0.0.10"
-    id("org.beryx.jlink") version "2.24.0"
+    id("org.beryx.jlink") version "2.24.4"
 }
 
 repositories {
@@ -9,9 +9,9 @@ repositories {
 }
 
 dependencies {
-    implementation("org.eclipse.jgit:org.eclipse.jgit:5.11.1.202105131744-r")
-    implementation("com.google.code.gson:gson:2.8.6")
-    implementation("org.jetbrains:annotations:20.1.0")
+    implementation("org.eclipse.jgit:org.eclipse.jgit:5.13.0.202109080827-r")
+    implementation("com.google.code.gson:gson:2.8.9")
+    implementation("org.jetbrains:annotations:22.0.0")
 }
 
 java {
