@@ -20,3 +20,5 @@ scenicView.*
 .attach_pid*
 .project
 .settings
+hs_err*.log
+replay*.log

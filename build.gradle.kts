@@ -27,8 +27,13 @@ javafx {
 
 jlink {
     launcher {
-        name = "SR2ModManager"
+        name = "OSRLaunchpad"
     }
+
+    mergedModuleName.set("io.github.openstarruler.launchpad.merged")
+
+    // Add SSL support
+    addOptions("--add-modules", "jdk.crypto.cryptoki")
 }
 
 tasks.withType<JavaCompile> {
@@ -39,31 +44,28 @@ tasks.withType<Jar> {
     from(project.file("LICENSE.txt"))
 }
 
-application.mainClass.set("com.dalolorn.sr2modmanager.view.Main")
-application.mainModule.set("SR2ModManager")
-
 application {
+    mainClass.set("com.dalolorn.sr2modmanager.view.Main")
+    mainModule.set("io.github.openstarruler.launchpad")
     executableDir = ""
+
+    applicationDistribution.run {
+        from(project.file("README.md")) {
+            rename("README.md", "README.txt")
+        }
+        from(project.file("history.json"))
+        from(project.file("LICENSE.txt"))
+    }
 }
 
 tasks.withType<CreateStartScripts> {
+    applicationName = "OSRLaunchpad"
+
     doLast {
         var windowsText = windowsScript.readText()
 
         windowsText = windowsText.replace(":fail\r\nrem", ":fail\r\npause\r\nrem")
 
         windowsScript.writeText(windowsText)
-    }
-}
-
-distributions {
-    main {
-        contents {
-            from(project.file("README.md")) {
-                rename("README.md", "README.txt")
-            }
-            from(project.file("history.json"))
-            from(project.file("LICENSE.txt"))
-        }
     }
 }

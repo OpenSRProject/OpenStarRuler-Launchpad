@@ -1,4 +1,4 @@
-module SR2ModManager {
+module io.github.openstarruler.launchpad {
 	requires javafx.controls;
 	requires javafx.fxml;
 	requires com.google.gson;
