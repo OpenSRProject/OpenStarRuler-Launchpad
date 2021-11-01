@@ -24,7 +24,7 @@
         </MenuBar>
     </top>
     <center>
-        <TabPane fx:id="tabs">
+        <TabPane tabClosingPolicy="UNAVAILABLE" fx:id="tabs">
             <Tab text="Manage Mods" fx:id="modsTab">
                 <fx:include source="ModManager.fxml" fx:id="modsPane"/>
             </Tab>
