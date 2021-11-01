@@ -39,10 +39,8 @@ tasks.withType<Jar> {
     from(project.file("LICENSE.txt"))
 }
 
-var mainClass: String? by application.mainClass // dereference the Property
-mainClass = "com.dalolorn.sr2modmanager.view.Main"
-var mainModule: String? by application.mainModule
-mainModule = "SR2ModManager"
+application.mainClass.set("com.dalolorn.sr2modmanager.view.Main")
+application.mainModule.set("SR2ModManager")
 
 application {
     executableDir = ""
