@@ -216,7 +216,7 @@ public class ModInstaller {
 	@NotNull
 	private static String parseRepoURL(@NotNull String url) {
 		if (!url.startsWith("http") && !url.startsWith(PROTOCOL_GIT))
-			url = PROTOCOL_GIT + url;
+			url = PROTOCOL_HTTPS + url;
 		if (!url.endsWith(".git"))
 			url += ".git";
 		return url;
