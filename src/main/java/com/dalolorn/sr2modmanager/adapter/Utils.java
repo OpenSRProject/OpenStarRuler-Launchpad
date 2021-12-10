@@ -1,7 +1,10 @@
 package com.dalolorn.sr2modmanager.adapter;
 
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.errors.RevisionSyntaxException;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectLoader;
+import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.jetbrains.annotations.NotNull;
@@ -120,5 +123,45 @@ public class Utils {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	/** Iterates through a list of likely metadata filenames. I'd use case-insensitive filtering, but I don't fancy figuring out how to write a case-insensitive version of PathFilter. */
+	static TreeWalk generateMetadataWalker(Repository repo, ObjectId tree) throws FileNotFoundException {
+		TreeWalk result = null;
+		try {
+			result = TreeWalk.forPath(repo, "metadata.json", tree);
+			if (result == null)
+				result = TreeWalk.forPath(repo, "METADATA.JSON", tree);
+			if (result == null)
+				result = TreeWalk.forPath(repo, "Metadata.json", tree);
+			if (result == null)
+				result = TreeWalk.forPath(repo, "METADATA.json", tree);
+			if (result == null)
+				result = TreeWalk.forPath(repo, "Metadata.JSON", tree);
+			if (result == null)
+				result = TreeWalk.forPath(repo, "metadata.JSON", tree);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		if (result == null)
+			throw new FileNotFoundException("Could not find metadata.json!");
+
+		return result;
+	}
+
+	interface WalkerGenerator {
+		TreeWalk call(Repository repository, ObjectId treeId) throws FileNotFoundException;
+	}
+
+	static ObjectLoader getLoader(
+			@NotNull Git repo,
+			@NotNull Ref currentBranch,
+			@NotNull WalkerGenerator walkerGenerator
+	) throws RevisionSyntaxException, IOException {
+		var repository = repo.getRepository();
+		var treeId = repository.resolve(currentBranch.getName() + "^{tree}");
+		var walker = walkerGenerator.call(repository, treeId);
+		var descriptionId = walker.getObjectId(0);
+		return repository.open(descriptionId);
 	}
 }

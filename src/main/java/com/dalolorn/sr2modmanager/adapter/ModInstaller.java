@@ -38,6 +38,7 @@ public class ModInstaller {
 	private static Git repo;
 
 	private static Ref currentBranch;
+	private static Metadata currentMetadata;
 	@NotNull private static final Map<String, Ref> branches = new HashMap<>();
 
 	public interface TextHandler {
@@ -58,14 +59,21 @@ public class ModInstaller {
 
 		ObjectLoader descriptionLoader;
 		try {
-			var repository = repo.getRepository();
-			var treeId = repository.resolve(currentBranch.getName() + "^{tree}");
-			var walker = Utils.generateBranchDescWalker(repository, treeId);
-			var descriptionId = walker.getObjectId(0);
-			descriptionLoader = repository.open(descriptionId);
+			descriptionLoader = Utils.getLoader(repo, currentBranch, Utils::generateBranchDescWalker);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return NO_BRANCH_DESC;
+		}
+
+		ObjectLoader metaLoader;
+		try {
+			metaLoader = Utils.getLoader(repo, currentBranch, Utils::generateMetadataWalker);
+			var json = Utils.readGitFile(metaLoader);
+			if(json != null) {
+				currentMetadata = new Gson().fromJson(json, Metadata.class);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
 		var json = Utils.readGitFile(descriptionLoader);
@@ -238,15 +246,17 @@ public class ModInstaller {
 			@NotNull TextHandler warningHandler,
 			@NotNull TextHandler progressHandler,
 			@Nullable TextHandler infoHandler,
-			@NotNull TextHandler errorHandler
+			@NotNull TextHandler errorHandler,
+			@Nullable String modName
 	) throws IOException {
 		File root = repo.getRepository().getWorkTree();
 
 		progressHandler.handle("Parsing installation instructions...");
 		var metadata = new File(root.getAbsolutePath() + File.separator + "metadata.json");
+		Metadata meta = null;
 		if(metadata.exists()) {
 			try (var reader = new FileReader(metadata)) {
-				Metadata meta = new Gson().fromJson(reader, Metadata.class);
+				meta = new Gson().fromJson(reader, Metadata.class);
 
 				if(meta.dependencies != null)
 					for (Metadata.Dependency dependency : meta.dependencies)
@@ -260,9 +270,9 @@ public class ModInstaller {
 		}
 
 		progressHandler.handle("Finding modinfo...");
-		Modinfo modinfo = findModinfo(root, warningHandler);
-		if(modinfo == null) {
-			errorHandler.handle("Cannot find modinfo.txt!\n\nThis repository does not appear to contain a valid Star Ruler 2 mod.\nPlease make sure that you have connected to the right repository, and contact the mod developer if the issue persists.");
+		Modinfo modinfo = findModinfo(root, warningHandler, meta, modName);
+		if (modinfo == null) {
+			reportMissingModinfo(errorHandler, modName);
 			return;
 		}
 
@@ -287,22 +297,42 @@ public class ModInstaller {
 			infoHandler.handle("Mod successfully installed!");
 	}
 
+	private static void reportMissingModinfo(
+			@NotNull TextHandler errorHandler,
+			@Nullable String modName
+	) {
+		if(modName != null) {
+			errorHandler.handle(String.format("Cannot find modinfo.txt!%n%nThis repository does not appear to have registered a valid Star Ruler 2 mod under the name \"%s\".%nPlease make sure that you have connected to the right repository, and contact the mod developer if the issue persists.", modName));
+		}
+		else {
+			errorHandler.handle("Cannot find modinfo.txt!\n\nThis repository does not appear to contain a valid Star Ruler 2 mod.\nPlease make sure that you have connected to the right repository, and contact the mod developer if the issue persists.");
+		}
+	}
+
 	private static Modinfo findModinfo(
 			@NotNull File root,
-			@Nullable TextHandler warningHandler
+			@Nullable TextHandler warningHandler,
+			@Nullable Metadata meta,
+			@Nullable String modName
 	) throws IOException {
 		var inRoot = false;
-		String mod;
+		String folderName;
 		var finder = new SingleFinder("modinfo.txt");
-		Files.walkFileTree(root.getAbsoluteFile().toPath(), finder);
+		var origin = root.getPath();
+		if(meta != null && modName != null) {
+			var mod = meta.mods.get(modName);
+			if(mod != null && mod.rootFolder != null && !mod.rootFolder.equals(""))
+				origin += File.separator + mod.rootFolder;
+		}
+		Files.walkFileTree(new File(origin).getAbsoluteFile().toPath(), finder);
 		if(finder.getResult() != null) {
-			mod = finder.getResult().getParent().getFileName().toString();
-			if(mod.equalsIgnoreCase(root.toPath().getFileName().toString())) {
+			folderName = finder.getResult().getParent().getFileName().toString();
+			if(Files.isSameFile(finder.getResult().getParent(), root.toPath())) {
 				inRoot = true; // The modinfo is in the repository root, so we can't discard metadata.
 				if(warningHandler != null)
 					warningHandler.handle("WARNING: Unable to discard repository metadata!\n\nTo improve loading times, it is recommended that you delete the installed mod's .git folder once installation is completed.");
 			}
-			return new Modinfo(inRoot, mod, finder.getResult().toFile());
+			return new Modinfo(inRoot, folderName, finder.getResult().toFile());
 		}
 		else {
 			return null;
@@ -323,7 +353,7 @@ public class ModInstaller {
 	) {
 		try {
 			progressHandler.handle("Parsing URL for dependency \"" + dependency.name + "\"...");
-			if (dependency.repository.equals("")) {
+			if (dependency.repository == null || dependency.repository.equals("")) {
 				warningHandler.handle(String.format("Failed to install dependency \"%s\": Dependency metadata doesn't specify a URL. The author may be playing a prank on his users.", dependency.name));
 				return false;
 			}
@@ -342,16 +372,20 @@ public class ModInstaller {
 
 			depRepo.pull().call();
 
+			TextHandler internalWarningHandler =
+					warning -> warningHandler.handle(String.format("Encountered warning while installing dependency \"%s\": %s", dependency.name, warning));
+
 			installModImpl(
 					depRepo,
-					warning -> warningHandler.handle(String.format("Encountered warning while installing dependency \"%s\": %s", dependency.name, warning)),
+					internalWarningHandler,
 					progress -> {
 						if(!progress.startsWith("Installing dependency"))
 							progress = String.format("Installing dependency \"%s\": %s", dependency.name, progress);
 						progressHandler.handle(progress);
 					},
 					null,
-					error -> warningHandler.handle(String.format("Failed to install dependency \"%s\": %s", dependency.name, error))
+					error -> warningHandler.handle(String.format("Failed to install dependency \"%s\": %s", dependency.name, error)),
+					dependency.modName
 			);
 			return true;
 		} catch (Exception e) {
@@ -391,7 +425,7 @@ public class ModInstaller {
 				repo.pull().call();
 			}
 
-			installModImpl(repo, warningHandler, progressHandler, infoHandler, errorHandler);
+			installModImpl(repo, warningHandler, progressHandler, infoHandler, errorHandler, null);
 		} catch (RefNotAdvertisedException e) {
 			errorHandler.handle("This branch or tag is no longer visible. It may have been deleted from the origin repository, or it may have been hidden somehow.\n\nThis may often be the case for branches used in beta testing or miscellaneous development; try another one, or contact the mod developers.");
 			e.printStackTrace();
@@ -417,11 +451,11 @@ public class ModInstaller {
 		}
 	}
 
-	public static boolean uninstallMod(@NotNull TextHandler errorHandler) {
+	public static boolean uninstallMod(@NotNull TextHandler errorHandler, @Nullable String modName) {
 		File root = repo.getRepository().getWorkTree();
 		Modinfo modinfo = null;
 		try {
-			modinfo = findModinfo(root, null);
+			modinfo = findModinfo(root, null, currentMetadata, modName);
 		} catch (Exception e) {
 			errorHandler.handle("Encountered an exception trying to find the modinfo file!\n\nFor some reason, the mod folder couldn't be detected. You may have to delete it yourself.");
 		}
