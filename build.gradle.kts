@@ -1,28 +1,44 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     application
-    id("org.openjfx.javafxplugin") version "0.0.10"
     id("org.beryx.jlink") version "2.24.0"
+    kotlin("jvm") version "1.6.10-RC"
 }
 
 repositories {
     mavenCentral()
 }
 
+val OPENJFX = "org.openjfx"
+val JFX_VERSION = "11.0.2"
+val JFX_MODULES = listOf(
+    "javafx-base",
+    "javafx-controls",
+    "javafx-fxml",
+    "javafx-graphics"
+)
+val SUPPORTED_PLATFORMS = listOf(
+    "linux",
+    "win"
+)
+
 dependencies {
     implementation("org.eclipse.jgit:org.eclipse.jgit:5.11.1.202105131744-r")
     implementation("com.google.code.gson:gson:2.8.6")
     implementation("org.jetbrains:annotations:20.1.0")
+    implementation(kotlin("stdlib-jdk8"))
+
+    JFX_MODULES.forEach { module ->
+        SUPPORTED_PLATFORMS.forEach { platform ->
+            implementation("$OPENJFX:$module:$JFX_VERSION:$platform")
+        }
+    }
 }
 
 java {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
-
-}
-
-javafx {
-    version = "11.0.2"
-    modules = mutableListOf("javafx.controls", "javafx.fxml")
 }
 
 jlink {
@@ -68,4 +84,13 @@ distributions {
             from(project.file("LICENSE.txt"))
         }
     }
+}
+
+val compileKotlin: KotlinCompile by tasks
+compileKotlin.kotlinOptions {
+    jvmTarget = "11"
+}
+val compileTestKotlin: KotlinCompile by tasks
+compileTestKotlin.kotlinOptions {
+    jvmTarget = "11"
 }
