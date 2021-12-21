@@ -1,4 +1,4 @@
-module SR2ModManager {
+module io.github.openstarruler.launchpad {
 	requires kotlin.stdlib;
 
 	requires javafx.controls;
@@ -9,9 +9,9 @@ module SR2ModManager {
 	requires static org.jetbrains.annotations;
 	requires java.security.jgss;
 
-	exports com.dalolorn.sr2modmanager.adapter;
-	exports com.dalolorn.sr2modmanager.model;
-	exports com.dalolorn.sr2modmanager.adapter.sr2utils;
-	opens com.dalolorn.sr2modmanager.view;
-	opens com.dalolorn.sr2modmanager.adapter to com.google.gson;
+	exports io.github.openstarruler.launchpad.adapter;
+	exports io.github.openstarruler.launchpad.model;
+	exports io.github.openstarruler.launchpad.adapter.sr2utils;
+	opens io.github.openstarruler.launchpad.view;
+	opens io.github.openstarruler.launchpad.adapter to com.google.gson;
 }

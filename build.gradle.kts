@@ -11,15 +11,10 @@ repositories {
     mavenCentral()
 }
 
-var mainClass: String? by application.mainClass // dereference the Property
-mainClass = "com.dalolorn.sr2modmanager.view.Main"
-var mainModule: String? by application.mainModule
-mainModule = "SR2ModManager"
-
 dependencies {
-    implementation("org.eclipse.jgit:org.eclipse.jgit:5.11.1.202105131744-r")
-    implementation("com.google.code.gson:gson:2.8.6")
-    implementation("org.jetbrains:annotations:20.1.0")
+    implementation("org.eclipse.jgit:org.eclipse.jgit:5.13.0.202109080827-r")
+    implementation("com.google.code.gson:gson:2.8.9")
+    implementation("org.jetbrains:annotations:22.0.0")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.6.0")
 }
 
@@ -35,9 +30,12 @@ javafx {
 
 jlink {
     launcher {
-        name = "SR2ModManager"
+        name = "OSRLaunchpad"
     }
     forceMerge("kotlin")
+
+    // Add SSL support
+    addOptions("--add-modules", "jdk.crypto.cryptoki")
 }
 
 tasks.withType<JavaCompile> {
@@ -49,28 +47,28 @@ tasks.withType<Jar> {
 }
 
 application {
+    mainClass.set("io.github.openstarruler.launchpad.view.Main")
+    mainModule.set("io.github.openstarruler.launchpad")
     executableDir = ""
+
+    applicationDistribution.run {
+        from(project.file("README.md")) {
+            rename("README.md", "README.txt")
+        }
+        from(project.file("history.json"))
+        from(project.file("LICENSE.txt"))
+    }
 }
 
 tasks.withType<CreateStartScripts> {
+    applicationName = "OSRLaunchpad"
+
     doLast {
         var windowsText = windowsScript.readText()
 
         windowsText = windowsText.replace(":fail\r\nrem", ":fail\r\npause\r\nrem")
 
         windowsScript.writeText(windowsText)
-    }
-}
-
-distributions {
-    main {
-        contents {
-            from(project.file("README.md")) {
-                rename("README.md", "README.txt")
-            }
-            from(project.file("history.json"))
-            from(project.file("LICENSE.txt"))
-        }
     }
 }
 

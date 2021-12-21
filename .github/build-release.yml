@@ -25,21 +25,21 @@ jobs:
       - name: Upload standard release
         uses: actions/upload-artifact@v2
         with:
-          name: SR2 Mod Manager $GITHUB_REF_NAME (Standard-Windows).zip
-          path: build/distributions/SR2ModManager.zip
+          name: OpenSR Launchpad $GITHUB_REF_NAME (Standard-Windows).zip
+          path: build/distributions/OpenStarRuler-Launchpad.zip
 
       - name: Build standalone release
         run: ./gradlew jlink
       - name: Create standalone launcher
-        run: '"cd image/bin && SR2ModManager.bat" > SR2ModManager.bat'
+        run: '"cd image/bin && OSRLaunchpad.bat" > OSRLaunchpad.bat'
         shell: powershell
       - name: Pack standalone release
-        run: 'Rename-Item README.md README.txt && Compress-Archive -Path README.txt,history.json,LICENSE.txt,build/image,SR2ModManager.bat -DestinationPath standalone-windows.zip'
+        run: 'Rename-Item README.md README.txt && Compress-Archive -Path README.txt,history.json,LICENSE.txt,build/image,OSRLaunchpad.bat -DestinationPath standalone-windows.zip'
         shell: powershell
       - name: Upload standalone release
         uses: actions/upload-artifact@v2
         with:
-          name: SR2 Mod Manager $GITHUB_REF_NAME (Standalone-Win64).zip
+          name: OpenSR Launchpad $GITHUB_REF_NAME (Standalone-Win64).zip
           path: standalone-windows.zip
 
   build-linux:
@@ -59,8 +59,8 @@ jobs:
       - name: Upload standard release
         uses: actions/upload-artifact@v2
         with:
-          name: SR2 Mod Manager $GITHUB_REF_NAME (Standard-Linux).zip
-          path: build/distributions/SR2ModManager.zip
+          name: OpenSR Launchpad $GITHUB_REF_NAME (Standard-Linux).zip
+          path: build/distributions/OpenStarRuler-Launchpad.zip
 
       # TODO: Figure out launcher script (and whether one is even needed)
       #- name: Build standalone release
@@ -78,4 +78,4 @@ jobs:
       - name: Attach artifacts
         uses: softprops/action-gh-release@v1
         with:
-          files: 'SR2 Mod Manager*.zip'
+          files: 'OpenSR Launchpad*.zip'
