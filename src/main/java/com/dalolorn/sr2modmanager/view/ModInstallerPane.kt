@@ -6,41 +6,54 @@ import com.dalolorn.sr2modmanager.adapter.Recommendations
 import javafx.application.Platform
 import javafx.concurrent.Task
 import javafx.fxml.FXML
+import javafx.fxml.FXMLLoader
 import javafx.scene.control.*
 import javafx.scene.control.Alert.AlertType
 import javafx.scene.layout.GridPane
 import javafx.stage.Stage
 import java.io.IOException
 
-class ModInstallerPane : GridPane() {
-    @FXML var connectButton: Button? = null
-    @FXML var installButton: Button? = null
 
-    @FXML var urlField: TextField? = null
-    @FXML var urlLabel: Label? = null
-    @FXML var recommendationLabel: Label? = null
+class ModInstallerPane() : GridPane() {
+    @FXML lateinit var connectButton: Button
+    @FXML lateinit var installButton: Button
 
-    @FXML var modInfo: TextArea? = null
-    @FXML var branchInfo: TextArea? = null
+    @FXML lateinit var urlField: TextField
+    @FXML lateinit var urlLabel: Label
+    @FXML lateinit var recommendationLabel: Label
 
-    @FXML var branchList: ListView<String>? = null
-    @FXML var modList: ListView<String>? = null
+    @FXML lateinit var modInfo: TextArea
+    @FXML lateinit var branchInfo: TextArea
 
-    @FXML var recommendationList: ListView<String>? = null
+    @FXML lateinit var branchList: ListView<String>
+    @FXML lateinit var modList: ListView<String>
+
+    @FXML lateinit var recommendationList: ListView<String>
+
+    init {
+        val fxmlLoader = FXMLLoader(
+            javaClass.getResource(
+                "ModInstaller.fxml"
+            )
+        )
+        fxmlLoader.setRoot(this)
+        fxmlLoader.setControllerFactory { this }
+        fxmlLoader.load<ModInstallerPane>()
+    }
 
     @FXML
     fun initialize() {
-        branchList!!.selectionModel.selectedItemProperty()
+        branchList.selectionModel.selectedItemProperty()
             .addListener { _, _, newValue ->
                 setActiveBranch(newValue)
             }
-        recommendationList!!.selectionModel.selectedIndexProperty()
+        recommendationList.selectionModel.selectedIndexProperty()
             .addListener { _, _, newValue ->
-                urlField!!.text = if (newValue.toInt() >= 0) recommendationList!!.items[newValue.toInt()] else ""
+                urlField.text = if (newValue.toInt() >= 0) recommendationList.items[newValue.toInt()] else ""
             }
         try {
             Recommendations.load()
-            recommendationList!!.items.addAll(Recommendations.instance.recommendationList)
+            recommendationList.items.addAll(Recommendations.instance.recommendationList)
         } catch (e: IOException) {
             val msg = Alert(AlertType.WARNING, "Could not load history.json! Cause:$e")
             e.printStackTrace()
@@ -49,8 +62,8 @@ class ModInstallerPane : GridPane() {
     }
 
     private fun setActiveBranch(branchName: String) {
-        branchInfo!!.text = ModInstaller.setActiveBranch(branchName)
-        installButton!!.isDisable = !ModInstaller.hasBranch()
+        branchInfo.text = ModInstaller.setActiveBranch(branchName)
+        installButton.isDisable = !ModInstaller.hasBranch()
     }
 
     @FXML
@@ -69,7 +82,7 @@ class ModInstallerPane : GridPane() {
                     }
 
                     if (ModInstaller.connectToRepository(
-                            urlField!!.text,
+                            urlField.text,
                             { updateMessage(it) },
                             errorHandler
                         ).also { repoURL = it!! } == null
@@ -84,8 +97,8 @@ class ModInstallerPane : GridPane() {
                     Platform.runLater {
                         setUrlText("Connected to $repoURL")
                         try {
-                            Recommendations.instance.addItem(urlField!!.text)
-                            recommendationList!!.items.setAll(Recommendations.instance.recommendationList)
+                            Recommendations.instance.addItem(urlField.text)
+                            recommendationList.items.setAll(Recommendations.instance.recommendationList)
                         } catch (e: IOException) {
                             val msg = Alert(AlertType.WARNING, "Could not save history.json! Cause: $e")
                             e.printStackTrace()
@@ -143,8 +156,8 @@ class ModInstallerPane : GridPane() {
     fun getBranches(errorHandler: TextHandler?): Boolean {
         val tagNames = ModInstaller.getBranches(errorHandler) ?: return false
         Platform.runLater {
-            branchList!!.items.clear()
-            branchList!!.items.addAll(tagNames)
+            branchList.items.clear()
+            branchList.items.addAll(tagNames)
         }
         return true
     }
@@ -152,14 +165,14 @@ class ModInstallerPane : GridPane() {
     fun getDescription(errorHandler: TextHandler?): Boolean {
         val description = ModInstaller.getDescription(errorHandler) ?: return false
         Platform.runLater {
-            modInfo!!.text = description
-            branchInfo!!.text = "No branches selected"
+            modInfo.text = description
+            branchInfo.text = "No branches selected"
         }
         return true
     }
 
     fun setUrlText(url: String?) {
-        urlLabel!!.text = url
+        urlLabel.text = url
     }
 
     fun deleteRepository() {
@@ -179,9 +192,9 @@ class ModInstallerPane : GridPane() {
                         val msg = ResizableAlert(AlertType.ERROR, error)
                         msg.show()
                     }) {
-                    branchList!!.items.clear()
-                    modInfo!!.text = ""
-                    branchInfo!!.text = ""
+                    branchList.items.clear()
+                    modInfo.text = ""
+                    branchInfo.text = ""
                 }
             }
     }
@@ -204,7 +217,7 @@ class ModInstallerPane : GridPane() {
                         val msg = ResizableAlert(AlertType.ERROR, error)
                         msg.show()
                     },
-                    modList!!.selectionModel.selectedItem
+                    modList.selectionModel.selectedItem
                 )
             }
     }

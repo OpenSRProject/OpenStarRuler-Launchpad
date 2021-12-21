@@ -1,0 +1,81 @@
+name: Build Release ZIPs
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+
+jobs:
+  build-windows:
+    name: Build Windows ZIPs
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: 11
+          distribution: adopt
+      - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
+
+      - name: Build standard release
+        run: ./gradlew distZip
+      - name: Upload standard release
+        uses: actions/upload-artifact@v2
+        with:
+          name: SR2 Mod Manager $GITHUB_REF_NAME (Standard-Windows).zip
+          path: build/distributions/SR2ModManager.zip
+
+      - name: Build standalone release
+        run: ./gradlew jlink
+      - name: Create standalone launcher
+        run: '"cd image/bin && SR2ModManager.bat" > SR2ModManager.bat'
+        shell: powershell
+      - name: Pack standalone release
+        run: 'Rename-Item README.md README.txt && Compress-Archive -Path README.txt,history.json,LICENSE.txt,build/image,SR2ModManager.bat -DestinationPath standalone-windows.zip'
+        shell: powershell
+      - name: Upload standalone release
+        uses: actions/upload-artifact@v2
+        with:
+          name: SR2 Mod Manager $GITHUB_REF_NAME (Standalone-Win64).zip
+          path: standalone-windows.zip
+
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: 11
+          distribution: adopt
+      - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
+
+      - name: Build standard release
+        run: ./gradlew distZip
+      - name: Upload standard release
+        uses: actions/upload-artifact@v2
+        with:
+          name: SR2 Mod Manager $GITHUB_REF_NAME (Standard-Linux).zip
+          path: build/distributions/SR2ModManager.zip
+
+      # TODO: Figure out launcher script (and whether one is even needed)
+      #- name: Build standalone release
+      #  run: ./gradlew jlink
+
+  deploy:
+    name: Attach ZIPs to release
+    needs:
+      - build-windows
+      - build-linux
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+      - name: Attach artifacts
+        uses: softprops/action-gh-release@v1
+        with:
+          files: 'SR2 Mod Manager*.zip'

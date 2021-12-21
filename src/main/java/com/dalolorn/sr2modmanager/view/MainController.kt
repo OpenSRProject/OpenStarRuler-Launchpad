@@ -22,27 +22,27 @@ import kotlin.system.exitProcess
 
 class MainController {
     // Shared UI components.
-    @FXML private val playButton: Button? = null
+    @FXML private lateinit var playButton: Button
 
-    @FXML private val tabs: TabPane? = null
-    @FXML private val modsTab: Tab? = null
-    @FXML private val installerTab: Tab? = null
-    @FXML private val osrTab: Tab? = null
+    @FXML private lateinit var tabs: TabPane
+    @FXML private lateinit var modsTab: Tab
+    @FXML private lateinit var installerTab: Tab
+    @FXML private lateinit var osrTab: Tab
 
-    @FXML private val openRepositoryItem: MenuItem? = null
-    @FXML private val deleteRepositoryItem: MenuItem? = null
-    @FXML private val uninstallModItem: MenuItem? = null
+    @FXML private lateinit var openRepositoryItem: MenuItem
+    @FXML private lateinit var deleteRepositoryItem: MenuItem
+    @FXML private lateinit var uninstallModItem: MenuItem
 
-    @FXML private val modsPane: ModManagerPane? = null
-    @FXML private val installerPane: ModInstallerPane? = null
-    @FXML private val osrPane: OpenSRManagerPane? = null
+    @FXML private lateinit var modsPane: ModManagerPane
+    @FXML private lateinit var installerPane: ModInstallerPane
+    @FXML private lateinit var osrPane: OpenSRManagerPane
 
     fun initialize() {
-        tabs!!.selectionModel.selectedItemProperty().addListener { _, _, newTab ->
-            deleteRepositoryItem!!.isDisable = newTab !== installerTab || !ModInstaller.hasRepo()
-            uninstallModItem!!.isDisable = newTab !== installerTab
+        tabs.selectionModel.selectedItemProperty().addListener { _, _, newTab ->
+            deleteRepositoryItem.isDisable = newTab !== installerTab || !ModInstaller.hasRepo()
+            uninstallModItem.isDisable = newTab !== installerTab
         }
-        osrPane!!.playButton = playButton
+        osrPane.playButton = playButton
 
         var needsConfig = true
         try {
@@ -63,13 +63,13 @@ class MainController {
                 "Could not detect Star Ruler 2 launchers! Please navigate to the root folder of your SR2 installation, containing the files 'Star Ruler 2.exe' and/or 'StarRuler2.sh'!"
             )
             msg.showAndWait()
-            setSR2Path()
+            Platform.runLater { setSR2Path() }
         }
     }
 
     @FXML
     private fun setSR2Path() {
-        osrPane!!.setSR2Path()
+        osrPane.setSR2Path()
     }
 
     @FXML
@@ -79,7 +79,7 @@ class MainController {
         chooser.initialDirectory = File("repositories/")
         chooser.initialDirectory.mkdirs()
         chooser.title = "Choose a Repository"
-        val dir = chooser.showDialog(playButton!!.scene.window)
+        val dir = chooser.showDialog(playButton.scene.window)
             ?: return // Anything on the window would suffice, playButton was just arbitrarily selected.
 
         executeTask("Loading repository...") { taskUpdateStage: Stage ->
@@ -98,7 +98,7 @@ class MainController {
                         ).also { repoURL = it!! } == null
                     ) return
                     updateMessage("Fetching branch list...")
-                    if (!installerPane!!.getBranches(errorHandler)) return
+                    if (!installerPane.getBranches(errorHandler)) return
                     updateMessage("Getting mod description...")
                     if (!installerPane.getDescription(errorHandler)) return
                     Platform.runLater { installerPane.setUrlText("Connected to $repoURL") }
@@ -127,8 +127,8 @@ class MainController {
 
     @FXML
     private fun deleteRepository() {
-        if (installerTab!!.isSelected) {
-            installerPane!!.deleteRepository()
+        if (installerTab.isSelected) {
+            installerPane.deleteRepository()
         }
     }
 
@@ -176,8 +176,8 @@ class MainController {
 
     @FXML
     fun uninstallMod() {
-        if (installerTab!!.isSelected) {
-            installerPane!!.uninstallMod()
+        if (installerTab.isSelected) {
+            installerPane.uninstallMod()
         }
     }
 

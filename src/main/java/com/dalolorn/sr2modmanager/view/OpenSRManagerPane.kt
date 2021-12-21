@@ -3,6 +3,7 @@ package com.dalolorn.sr2modmanager.view
 import com.dalolorn.sr2modmanager.adapter.Settings
 import com.dalolorn.sr2modmanager.adapter.Utils
 import javafx.fxml.FXML
+import javafx.fxml.FXMLLoader
 import javafx.scene.control.*
 import javafx.scene.control.Alert.AlertType
 import javafx.scene.layout.GridPane
@@ -12,14 +13,25 @@ import java.io.File
 import java.io.IOException
 
 class OpenSRManagerPane : GridPane() {
-    var playButton: Button? = null
+    lateinit var playButton: Button
 
-    @FXML var osrVersionList: ListView<String>? = null
-    @FXML var gamePathCaption: Label? = null
-    @FXML var gamePathLabel: Label? = null
-    @FXML var findGameButton: Button? = null
-    @FXML var updateGameButton: Button? = null
-    @FXML var osrVersionInfo: TextArea? = null
+    @FXML lateinit var osrVersionList: ListView<String>
+    @FXML lateinit var gamePathCaption: Label
+    @FXML lateinit var gamePathLabel: Label
+    @FXML lateinit var findGameButton: Button
+    @FXML lateinit var updateGameButton: Button
+    @FXML lateinit var osrVersionInfo: TextArea
+
+    init {
+        val fxmlLoader = FXMLLoader(
+            javaClass.getResource(
+                "OpenSRManager.fxml"
+            )
+        )
+        fxmlLoader.setRoot(this)
+        fxmlLoader.setControllerFactory { this }
+        fxmlLoader.load<OpenSRManagerPane>()
+    }
 
     @FXML
     fun initialize() {
@@ -27,11 +39,11 @@ class OpenSRManagerPane : GridPane() {
 
     @FXML
     fun setSR2Path() {
-        setSR2Path(scene.window)
+        setSR2Path(playButton.scene.window)
     }
 
     private fun setSR2Path(window: Window) {
-        playButton!!.isDisable = true
+        playButton.isDisable = true
         setSR2Path(File(Settings.instance.gamePath), window)
     }
 
@@ -51,7 +63,7 @@ class OpenSRManagerPane : GridPane() {
             return
         }
         Settings.instance.gamePath = dir.absolutePath
-        playButton!!.isDisable = false
+        playButton.isDisable = false
         try {
             Settings.instance.save()
         } catch (e: IOException) {

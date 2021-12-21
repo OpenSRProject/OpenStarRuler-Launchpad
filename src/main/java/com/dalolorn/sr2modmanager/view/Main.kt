@@ -27,7 +27,7 @@ class Main : Application() {
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-            launch(*args)
+            launch(Main::class.java, *args)
         }
     }
 }

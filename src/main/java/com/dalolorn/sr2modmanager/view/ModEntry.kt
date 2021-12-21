@@ -8,10 +8,10 @@ import javafx.scene.layout.BorderPane
 import java.io.IOException
 
 class ModEntry : BorderPane() {
-    @FXML private val enabledToggle: CheckBox? = null
-    @FXML private val updateButton: Button? = null
-    @FXML private val uninstallButton: Button? = null
-    @FXML private val openButton: Button? = null
+    @FXML private lateinit var enabledToggle: CheckBox
+    @FXML private lateinit var updateButton: Button
+    @FXML private lateinit var uninstallButton: Button
+    @FXML private lateinit var openButton: Button
 
     @FXML
     fun initialize() {

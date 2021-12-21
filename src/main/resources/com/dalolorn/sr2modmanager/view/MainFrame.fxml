@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.dalolorn.sr2modmanager.view.ModInstallerPane?>
+<?import com.dalolorn.sr2modmanager.view.ModManagerPane?>
+<?import com.dalolorn.sr2modmanager.view.OpenSRManagerPane?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.BorderPane?>
@@ -26,13 +29,13 @@
     <center>
         <TabPane fx:id="tabs">
             <Tab fx:id="modsTab" text="Manage Mods">
-                <fx:include fx:id="modsPane" source="ModManager.fxml" />
+                <ModManagerPane fx:id="modsPane" />
             </Tab>
             <Tab fx:id="installerTab" text="Install Mods">
-                <fx:include fx:id="installerPane" source="ModInstaller.fxml" />
+                <ModInstallerPane fx:id="installerPane" />
             </Tab>
             <Tab fx:id="osrTab" text="Manage OpenSR">
-                <fx:include fx:id="osrPane" source="OpenSRManager.fxml" />
+                <OpenSRManagerPane fx:id="osrPane" />
             </Tab>
         </TabPane>
     </center>

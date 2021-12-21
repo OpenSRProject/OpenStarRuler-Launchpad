@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.dalolorn.sr2modmanager.view.ModInstallerPane?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<ModInstallerPane prefHeight="400" prefWidth="750.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dalolorn.sr2modmanager.view.ModInstallerPane">
+<fx:root type="GridPane" prefHeight="400" prefWidth="750.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dalolorn.sr2modmanager.view.ModInstallerPane">
     <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
@@ -64,4 +63,4 @@
             </AnchorPane>
         </Tab>
     </TabPane>
-</ModInstallerPane>
+</fx:root>
