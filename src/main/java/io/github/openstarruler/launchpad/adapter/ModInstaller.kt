@@ -17,9 +17,10 @@ import org.eclipse.jgit.lib.ObjectLoader
 import org.eclipse.jgit.lib.Ref
 import java.awt.Desktop
 import java.io.File
-import java.io.FileReader
 import java.io.IOException
 import java.nio.file.Files
+import java.nio.file.Path
+import kotlin.io.path.*
 
 object ModInstaller {
     private const val NO_BRANCH_DESC = "No description could be found for this branch."
@@ -33,13 +34,9 @@ object ModInstaller {
     private var currentMetadata: RepoMetadata? = null
     private val branches: MutableMap<String, Ref> = mutableMapOf()
 
-    fun hasRepo(): Boolean {
-        return repo != null
-    }
+    fun hasRepo() = repo != null
 
-    fun hasBranch(): Boolean {
-        return currentBranch != null
-    }
+    fun hasBranch() = currentBranch != null
 
     fun setActiveBranch(branchName: String): String {
         currentBranch = branches[branchName]
@@ -109,11 +106,11 @@ object ModInstaller {
     }
 
     @Throws(GitAPIException::class)
-    private fun cloneRepository(localRoot: File, url: String): Git {
+    private fun cloneRepository(localRoot: Path, url: String): Git {
         return try {
-            Git.open(localRoot)
+            Git.open(localRoot.toFile())
         } catch (e: IOException) {
-            val cmd = Git.cloneRepository().setDirectory(localRoot)
+            val cmd = Git.cloneRepository().setDirectory(localRoot.toFile())
             try {
                 cmd.setURI(url).call()
             } catch (e2: Exception) {
@@ -186,13 +183,13 @@ object ModInstaller {
     }
 
     @Throws(IOException::class)
-    private fun getLocalRoot(url: String): File {
+    private fun getLocalRoot(url: String): Path {
         val path = url.split("/").toTypedArray()
         var repoName = path[path.size - 2] + "_" + path[path.size - 1]
         repoName = repoName.substring(0, repoName.length - 4)
-        var localRoot = File("repositories" + File.separator + repoName)
-        if (!localRoot.exists() || !localRoot.isDirectory) localRoot =
-            Files.createDirectories(localRoot.toPath()).toFile()
+        var localRoot = Path("repositories", repoName)
+        if (!localRoot.exists() || !localRoot.isDirectory()) localRoot =
+            Files.createDirectories(localRoot)
         return localRoot
     }
 
@@ -205,13 +202,13 @@ object ModInstaller {
         errorHandler: TextHandler,
         modName: String?
     ) {
-        val root = repo.repository.workTree
+        val root: Path = repo.repository.workTree.toPath()
         progressHandler.handle("Parsing installation instructions...")
-        val metadata = File(root.absolutePath + File.separator + "metadata.json")
+        val metadata = root.absolute() / "metadata.json"
         var meta: RepoMetadata? = null
         if (metadata.exists()) {
             try {
-                FileReader(metadata).use { reader ->
+                Files.newBufferedReader(metadata).use { reader ->
                     meta = Gson().fromJson(reader, RepoMetadata::class.java)
                     meta?.dependencies?.forEach { dependency ->
                         if (!installDependency(dependency, progressHandler, warningHandler))
@@ -221,7 +218,7 @@ object ModInstaller {
             } catch (e: Exception) {
                 warningHandler.handle("WARNING: Unable to read installation instructions!\n\nThis mod's repository contains an additional metadata file (metadata.json) with additional information required for a successful installation, such as the locations of any prerequisite mods.\nPlease review the metadata file and take the necessary actions, or contact the mod developer.")
                 e.printStackTrace()
-                Desktop.getDesktop().open(metadata)
+                Desktop.getDesktop().open(metadata.toFile())
             }
         }
 
@@ -233,20 +230,20 @@ object ModInstaller {
         }
 
         progressHandler.handle("Found modinfo, preparing installation directory...")
-        val source: File =
+        val source =
             if (modinfo.inRoot) root
-            else File(root.toString() + File.separator + modinfo.folderName)
+            else root / modinfo.folderName
         val destination = findModInstallDir(modinfo)
         // Wipe out any previous installation, just to be sure.
-        Utils.deleteFolder(destination)
+        Utils.deleteFolder(destination.toFile())
         if (destination.exists()) { // We failed to delete the previous installation.
             errorHandler.handle("Could not delete previous mod installation!\n\nA possible workaround might be to delete the mod folder yourself, then try again.")
             return
         }
 
         progressHandler.handle("Copying mod files from repository...")
-        destination.mkdirs()
-        Files.walkFileTree(source.absoluteFile.toPath(), CopyFileVisitor(destination.absoluteFile.toPath()))
+        destination.createDirectories()
+        Files.walkFileTree(source.absolute(), CopyFileVisitor(destination.toAbsolutePath()))
         infoHandler?.handle("Mod successfully installed!")
     }
 
@@ -268,7 +265,7 @@ object ModInstaller {
 
     @Throws(IOException::class)
     private fun findModinfo(
-        root: File,
+        root: Path,
         warningHandler: TextHandler?,
         meta: RepoMetadata?,
         modName: String?
@@ -276,15 +273,15 @@ object ModInstaller {
         var inRoot = false
         val folderName: String
         val finder = SingleFinder("modinfo.txt")
-        var origin = root.path
+        var origin = root
         if (meta != null && modName != null) {
             val mod = meta.mods[modName]
-            if (mod?.rootFolder != null && mod.rootFolder != "") origin += File.separator + mod.rootFolder
+            if (mod?.rootFolder != null && mod.rootFolder != "") origin /= mod.rootFolder!!
         }
-        Files.walkFileTree(File(origin).absoluteFile.toPath(), finder)
+        Files.walkFileTree(origin.absolute(), finder)
         return if (finder.result != null) {
             folderName = finder.result!!.parent.fileName.toString()
-            if (Files.isSameFile(finder.result!!.parent, root.toPath())) {
+            if (Files.isSameFile(finder.result!!.parent, root)) {
                 inRoot = true // The modinfo is in the repository root, so we can't discard metadata.
                 warningHandler?.handle("WARNING: Unable to discard repository metadata!\n\nTo improve loading times, it is recommended that you delete the installed mod's .git folder once installation is completed.")
             }
@@ -296,8 +293,8 @@ object ModInstaller {
 
     private fun findModInstallDir(
         modinfo: Modinfo
-    ): File {
-        return File(Settings.instance.modsFolder + File.separator + modinfo.folderName)
+    ): Path {
+        return Settings.instance.modsFolder / modinfo.folderName
     }
 
     private fun installDependency(
@@ -422,7 +419,7 @@ object ModInstaller {
     }
 
     fun uninstallMod(errorHandler: TextHandler, modName: String?): Boolean {
-        val root = repo!!.repository.workTree
+        val root = repo!!.repository.workTree.toPath()
         var modinfo: Modinfo? = null
         try {
             modinfo = findModinfo(root, null, currentMetadata, modName)
@@ -431,7 +428,7 @@ object ModInstaller {
         }
         if (modinfo == null) return false
         val installDir = findModInstallDir(modinfo)
-        Utils.deleteFolder(installDir)
+        Utils.deleteFolder(installDir.toFile())
         return if (installDir.exists()) {
             errorHandler.handle("Could not delete mod folder!\n\nFor some reason, the mod folder couldn't be deleted. You may have to delete it yourself.")
             false

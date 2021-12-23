@@ -5,7 +5,7 @@ import java.nio.file.*
 import java.nio.file.attribute.BasicFileAttributes
 
 abstract class Finder<T> internal constructor(pattern: String) : SimpleFileVisitor<Path>() {
-    protected val matcher: PathMatcher
+    protected val matcher: PathMatcher = FileSystems.getDefault().getPathMatcher("glob:$pattern")
     protected abstract fun find(file: Path): T?
     abstract val result: T?
 
@@ -24,9 +24,5 @@ abstract class Finder<T> internal constructor(pattern: String) : SimpleFileVisit
     override fun visitFileFailed(file: Path, exc: IOException): FileVisitResult {
         System.err.println(exc)
         return FileVisitResult.CONTINUE
-    }
-
-    init {
-        matcher = FileSystems.getDefault().getPathMatcher("glob:$pattern")
     }
 }

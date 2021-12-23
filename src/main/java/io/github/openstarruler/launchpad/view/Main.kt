@@ -1,3 +1,4 @@
+@file:JvmName("Main")
 package io.github.openstarruler.launchpad.view
 
 import javafx.application.Application
@@ -9,7 +10,7 @@ import javafx.stage.Stage
 import java.io.IOException
 import kotlin.system.exitProcess
 
-class Main : Application() {
+class OSRLaunchpadApplication : Application() {
     override fun start(primaryStage: Stage) {
         try {
             val root = FXMLLoader.load<Parent>(javaClass.getResource("MainFrame.fxml"))
@@ -23,11 +24,8 @@ class Main : Application() {
             msg.showAndWait().ifPresent { exitProcess(-1) }
         }
     }
+}
 
-    companion object {
-        @JvmStatic
-        fun main(args: Array<String>) {
-            launch(Main::class.java, *args)
-        }
-    }
+fun main(args: Array<String>) {
+    Application.launch(OSRLaunchpadApplication::class.java, *args)
 }

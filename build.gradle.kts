@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     application
     id("org.openjfx.javafxplugin") version "0.0.10"
-    id("org.beryx.jlink") version "2.24.0"
+    id("org.beryx.jlink") version "2.24.4"
     kotlin("jvm") version "1.6.10"
 }
 
@@ -13,10 +13,10 @@ repositories {
 
 dependencies {
     implementation(platform(kotlin("bom")))
-    implementation("org.eclipse.jgit:org.eclipse.jgit:5.13.0.202109080827-r")
+    implementation("org.eclipse.jgit:org.eclipse.jgit:6.0.0.202111291000-r")
     implementation("com.google.code.gson:gson:2.8.9")
-    implementation("org.jetbrains:annotations:22.0.0")
-    implementation(kotlin("stdlib"))
+    implementation("org.jetbrains:annotations:23.0.0")
+    implementation(kotlin("stdlib-jdk8"))
 }
 
 java {
@@ -33,7 +33,8 @@ jlink {
     launcher {
         name = "OSRLaunchpad"
     }
-    forceMerge("kotlin")
+    // Remove kotlin builtin metadata files, to not get problems with JPMS because of duplicate packages (we don't use kotlin-reflect anyways)
+    jarExclude("kotlin-stdlib-common", "**/*")
 
     // Add SSL support
     addOptions("--add-modules", "jdk.crypto.cryptoki")

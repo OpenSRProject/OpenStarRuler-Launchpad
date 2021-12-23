@@ -5,6 +5,9 @@ import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
 import java.io.IOException
+import java.nio.file.Path
+import kotlin.io.path.Path
+import kotlin.io.path.div
 
 class Settings private constructor() {
     var gamePath = ".."
@@ -12,13 +15,13 @@ class Settings private constructor() {
     var isFirstRun = true
 
     // %USERPROFILE%/Documents/My Games/Star Ruler 2/mods
-    val modsFolder: String
+    val modsFolder: Path
         get() = if (installToUser) {
             if (Utils.IS_WINDOWS) {
                 // %USERPROFILE%/Documents/My Games/Star Ruler 2/mods
-                System.getProperty("user.home") + File.separator + "Documents" + File.separator + "My Games" + File.separator + "Star Ruler 2" + File.separator + "mods"
-            } else System.getProperty("user.home") + File.separator + ".starruler2" + File.separator + "mods"
-        } else gamePath + File.separator + "mods"
+                Path(System.getProperty("user.home")) / "Documents" / "My Games" / "Star Ruler 2" / "mods"
+            } else Path(System.getProperty("user.home")) / ".starruler2" / "mods"
+        } else Path(gamePath) / "mods"
 
     @Throws(IOException::class)
     fun save() {

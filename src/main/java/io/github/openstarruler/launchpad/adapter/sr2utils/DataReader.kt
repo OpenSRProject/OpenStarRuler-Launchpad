@@ -23,7 +23,6 @@ class DataReader {
     var key: String = ""
     var value: String = ""
 
-    @JvmOverloads
     constructor(file: File, allowLines: Boolean = true) {
         this.allowLines = allowLines
         filename = file.name
@@ -34,7 +33,6 @@ class DataReader {
         }
     }
 
-    @JvmOverloads
     constructor(fileLoader: ObjectLoader, name: String, allowLines: Boolean = true) {
         this.allowLines = allowLines
         filename = name
@@ -126,12 +124,12 @@ class DataReader {
 
     private val indentLevel: Boolean
         get() {
-            val pos = line.length - line.stripLeading().length
+            val pos = line.length - line.trimStart().length
             if (pos == 0) {
                 if (skipEmpty) return true
                 indent = 0
             } else {
-                val rpos = line.substring(0, line.length - line.stripTrailing().length).length
+                val rpos = line.substring(0, line.length - line.trimEnd().length).length
                 if (rpos != 0) line = line.substring(pos, rpos - pos + 1)
                 indent = pos
             }
@@ -151,7 +149,6 @@ class DataReader {
         lineIndex = 0
     }
 
-    @JvmOverloads
     fun splitKeyValue(input: String, separator: Char = ':'): Boolean {
         val index = input.indexOf(separator)
         if (index == -1) return false
