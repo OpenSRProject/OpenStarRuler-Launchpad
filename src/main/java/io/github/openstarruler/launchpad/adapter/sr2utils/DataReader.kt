@@ -98,7 +98,7 @@ class DataReader {
             line = if (line[line.length - 1] == '\\') line.substring(
                 0,
                 line.length - 1
-            ) else if (squash) " " else "\n"
+            ) else line + if (squash) " " else "\n"
         } else {
             // Preserve empty lines in squash mode
             line += if (squash) "\n\n" else "\n"
@@ -124,13 +124,12 @@ class DataReader {
 
     private val indentLevel: Boolean
         get() {
-            val pos = line.length - line.trimStart().length
-            if (pos == 0) {
+            val pos = line.indexOfFirst { !"\t\n\r ".contains(it) }
+            if (pos == -1) {
                 if (skipEmpty) return true
                 indent = 0
             } else {
-                val rpos = line.substring(0, line.length - line.trimEnd().length).length
-                if (rpos != 0) line = line.substring(pos, rpos - pos + 1)
+                line = line.trimEnd()
                 indent = pos
             }
             return false

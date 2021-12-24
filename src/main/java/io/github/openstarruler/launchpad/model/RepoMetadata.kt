@@ -8,11 +8,13 @@ class RepoMetadata {
         var modName: String? = null
     }
 
-    class Mod {
-        var rootFolder: String? = null
-        var dependencies: List<Dependency> = ArrayList()
-    }
+    class Mod(
+        var rootFolder: String? = null,
+        var dependencies: List<Dependency>? = null
+    )
 
-    var dependencies: List<Dependency>? = ArrayList()
-    var mods: Map<String?, Mod?> = HashMap()
+    var dependencies: List<Dependency>? = null
+    var mods: Map<String, Mod>? = null
+        get() = field ?: mapOf("Default mod" to Mod(null, this.dependencies))
+
 }

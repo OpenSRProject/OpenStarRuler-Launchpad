@@ -1,11 +1,12 @@
 package io.github.openstarruler.launchpad.model
 
 import io.github.openstarruler.launchpad.adapter.sr2utils.DataReader
+import org.eclipse.jgit.lib.ObjectLoader
 import java.io.File
 
-class Modinfo(val inRoot: Boolean, val folderName: String, file: File) {
+class Modinfo(val inRoot: Boolean, val folderName: String, val dataReader: DataReader) {
     private var name: String? = null
-    private var description: String? = null
+    internal var description: String? = null
     private var parentName: String? = null
     private var version = 0
     private var compatibility = 0
@@ -15,7 +16,12 @@ class Modinfo(val inRoot: Boolean, val folderName: String, file: File) {
     private var overrides: MutableList<String?> = mutableListOf()
     private var overridePatterns: MutableList<List<String?>?> = mutableListOf()
     private var fallbacks: MutableMap<Int, String?> = mutableMapOf()
-    private fun parse(file: DataReader) {
+
+    constructor(inRoot: Boolean, folderName: String, file: File) : this(inRoot, folderName, dataReader = DataReader(file))
+
+    constructor(inRoot: Boolean, folderName: String, loader: ObjectLoader): this(inRoot, folderName, dataReader = DataReader(loader, "${folderName}modinfo.txt"))
+
+    private fun parseModinfo(file: DataReader) {
         var key: String
         var value: String
         while (file.next()) {
@@ -52,6 +58,6 @@ class Modinfo(val inRoot: Boolean, val folderName: String, file: File) {
     }
 
     init {
-        parse(DataReader(file))
+        parseModinfo(dataReader)
     }
 }

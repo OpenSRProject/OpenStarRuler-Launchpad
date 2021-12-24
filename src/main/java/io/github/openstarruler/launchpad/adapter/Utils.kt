@@ -6,7 +6,9 @@ import org.eclipse.jgit.lib.ObjectId
 import org.eclipse.jgit.lib.ObjectLoader
 import org.eclipse.jgit.lib.Repository
 import org.eclipse.jgit.treewalk.TreeWalk
+import org.eclipse.jgit.treewalk.filter.PathSuffixFilter
 import java.io.*
+import java.nio.file.Path
 import java.util.stream.Collectors
 
 /** Utility class containing a number of helper functions.  */
@@ -63,6 +65,29 @@ object Utils {
             e.printStackTrace()
         }
         if (result == null) throw FileNotFoundException("Could not find README.md!")
+        return result
+    }
+
+    @Throws(FileNotFoundException::class)
+    fun generateModinfoWalker(repo: Repository?, tree: ObjectId?, root: Path?): TreeWalk {
+        var result: TreeWalk? = null
+        try {
+            if(root != null) {
+                result = TreeWalk.forPath(repo, "modinfo.txt", tree)
+            }
+            else {
+                result = TreeWalk(repo).apply {
+                    addTree(tree)
+                    isRecursive = true
+                    filter = PathSuffixFilter.create("modinfo.txt")
+                }
+                if(!result.next())
+                    result = null
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        if(result == null) throw FileNotFoundException("Could not find modinfo.txt at path '$root'!")
         return result
     }
 

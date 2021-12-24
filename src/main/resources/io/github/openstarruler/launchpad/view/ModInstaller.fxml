@@ -20,7 +20,7 @@
         <rowConstraints>
             <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
         </rowConstraints>
-        <ListView fx:id="branchList" prefHeight="275.0" prefWidth="300.0" visible="false" GridPane.columnIndex="0"/>
+        <ListView fx:id="branchList" prefHeight="275.0" prefWidth="300.0" GridPane.columnIndex="0"/>
         <ListView fx:id="modList" prefHeight="275.0" prefWidth="300.0" GridPane.columnIndex="1"/>
     </GridPane>
     <VBox alignment="CENTER" fillWidth="false" spacing="5.0" GridPane.columnIndex="1" GridPane.vgrow="NEVER">
@@ -52,14 +52,19 @@
         <ListView fx:id="recommendationList" />
     </VBox>
     <TabPane layoutY="300.0" tabClosingPolicy="UNAVAILABLE" GridPane.columnSpan="2147483647" GridPane.rowIndex="1">
-        <Tab text="Mod Info">
+        <Tab text="Repository Info">
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                <TextArea fx:id="modInfo" editable="false" layoutX="200.0" layoutY="44.0" prefHeight="200.0" prefWidth="200.0" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                <TextArea fx:id="repoInfo" editable="false" layoutX="200.0" layoutY="44.0" prefHeight="200.0" prefWidth="200.0" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
             </AnchorPane>
         </Tab>
         <Tab text="Branch Info">
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                 <TextArea fx:id="branchInfo" editable="false" layoutY="6.0" prefHeight="200.0" prefWidth="200.0" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+            </AnchorPane>
+        </Tab>
+        <Tab text="Mod Info">
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                <TextArea fx:id="modInfo" editable="false" layoutX="200.0" layoutY="44.0" prefHeight="200.0" prefWidth="200.0" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
             </AnchorPane>
         </Tab>
     </TabPane>

@@ -3,6 +3,7 @@ package io.github.openstarruler.launchpad.view
 import io.github.openstarruler.launchpad.adapter.ModInstaller
 import io.github.openstarruler.launchpad.adapter.ModInstaller.TextHandler
 import io.github.openstarruler.launchpad.adapter.Recommendations
+import io.github.openstarruler.launchpad.model.RepoMetadata
 import javafx.application.Platform
 import javafx.concurrent.Task
 import javafx.fxml.FXML
@@ -24,6 +25,7 @@ class ModInstallerPane() : GridPane() {
 
     @FXML lateinit var modInfo: TextArea
     @FXML lateinit var branchInfo: TextArea
+    @FXML lateinit var repoInfo: TextArea
 
     @FXML lateinit var branchList: ListView<String>
     @FXML lateinit var modList: ListView<String>
@@ -44,12 +46,17 @@ class ModInstallerPane() : GridPane() {
     @FXML
     fun initialize() {
         branchList.selectionModel.selectedItemProperty()
-            .addListener { _, _, newValue ->
+            .addListener { _, _, newValue: String? ->
                 setActiveBranch(newValue)
+                updateModList(ModInstaller.listMods())
             }
         recommendationList.selectionModel.selectedIndexProperty()
-            .addListener { _, _, newValue ->
-                urlField.text = if (newValue.toInt() >= 0) recommendationList.items[newValue.toInt()] else ""
+            .addListener { _, _, newValue: Number? ->
+                urlField.text = if (newValue != null && newValue.toInt() >= 0) recommendationList.items[newValue.toInt()] else ""
+            }
+        modList.selectionModel.selectedItemProperty()
+            .addListener { _, _, newValue: String? ->
+                setSelectedMod(newValue)
             }
         try {
             Recommendations.load()
@@ -61,8 +68,17 @@ class ModInstallerPane() : GridPane() {
         }
     }
 
-    private fun setActiveBranch(branchName: String) {
+    private fun setSelectedMod(modName: String?) {
+        modInfo.text = ModInstaller.getModDescription(modName)
+    }
+
+    private fun updateModList(mods: Map<String, RepoMetadata.Mod>) {
+        modList.items.setAll(mods.keys)
+    }
+
+    private fun setActiveBranch(branchName: String?) {
         branchInfo.text = ModInstaller.setActiveBranch(branchName)
+        modInfo.text = "No mods selected"
         installButton.isDisable = !ModInstaller.hasBranch()
     }
 
@@ -156,8 +172,7 @@ class ModInstallerPane() : GridPane() {
     fun getBranches(errorHandler: TextHandler?): Boolean {
         val tagNames = ModInstaller.getBranches(errorHandler) ?: return false
         Platform.runLater {
-            branchList.items.clear()
-            branchList.items.addAll(tagNames)
+            branchList.items.setAll(tagNames)
         }
         return true
     }
@@ -165,8 +180,9 @@ class ModInstallerPane() : GridPane() {
     fun getDescription(errorHandler: TextHandler?): Boolean {
         val description = ModInstaller.getDescription(errorHandler) ?: return false
         Platform.runLater {
-            modInfo.text = description
+            repoInfo.text = description
             branchInfo.text = "No branches selected"
+            modInfo.text = "No mods selected"
         }
         return true
     }
@@ -193,8 +209,10 @@ class ModInstallerPane() : GridPane() {
                         msg.show()
                     }) {
                     branchList.items.clear()
+                    modList.items.clear()
                     modInfo.text = ""
                     branchInfo.text = ""
+                    repoInfo.text = ""
                 }
             }
     }

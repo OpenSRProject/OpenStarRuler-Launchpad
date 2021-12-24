@@ -32,13 +32,16 @@ object ModInstaller {
     private var repo: Git? = null
     private var currentBranch: Ref? = null
     private var currentMetadata: RepoMetadata? = null
+        get() = if (currentBranch != null) field ?: RepoMetadata() else null
     private val branches: MutableMap<String, Ref> = mutableMapOf()
 
     fun hasRepo() = repo != null
 
     fun hasBranch() = currentBranch != null
 
-    fun setActiveBranch(branchName: String): String {
+    fun setActiveBranch(branchName: String?): String {
+        currentMetadata = null
+
         currentBranch = branches[branchName]
         val descriptionLoader: ObjectLoader? = try {
             Utils.getLoader(repo!!, currentBranch!!.name, Utils::generateBranchDescWalker)
@@ -91,6 +94,8 @@ object ModInstaller {
             val tmp = cloneRepository(localRoot, url)
             if (repo != null)
                 repo!!.close()
+            currentBranch = null
+            currentMetadata = null
             repo = tmp
             url
         } catch (e: Exception) {
@@ -275,7 +280,7 @@ object ModInstaller {
         val finder = SingleFinder("modinfo.txt")
         var origin = root
         if (meta != null && modName != null) {
-            val mod = meta.mods[modName]
+            val mod = meta.mods?.get(modName)
             if (mod?.rootFolder != null && mod.rootFolder != "") origin /= mod.rootFolder!!
         }
         Files.walkFileTree(origin.absolute(), finder)
@@ -289,6 +294,20 @@ object ModInstaller {
         } else {
             null
         }
+    }
+
+    @Throws(IOException::class)
+    private fun findGitModinfo(
+        root: Path?,
+        warningHandler: TextHandler?
+    ): Modinfo? {
+        val repository = repo!!.repository
+        val treeId = repository.resolve("${currentBranch!!.name}^{tree}")
+        val walker = Utils.generateModinfoWalker(repository, treeId, root)
+        val inRoot = walker.pathString == "modinfo.txt"
+        val modinfoId = walker.getObjectId(0)
+        val loader = repository.open(modinfoId)
+        return Modinfo(inRoot, walker.pathString.removeSuffix("modinfo.txt"), loader)
     }
 
     private fun findModInstallDir(
@@ -435,6 +454,19 @@ object ModInstaller {
         } else {
             true
         }
+    }
+
+    fun getModDescription(modName: String?): String {
+        val modinfo = findGitModinfo(currentMetadata?.mods?.get(modName)?.rootFolder?.let { Path(it) / "" } , null)
+        return if (modinfo != null) {
+            modinfo.description ?: "That's weird. This mod has no description.\n\nWell, it's a Star Ruler 2 mod, at any rate!"
+        } else {
+            "No modinfo could be found for this mod! This is not a valid Star Ruler 2 mod!"
+        }
+    }
+
+    fun listMods(): Map<String, RepoMetadata.Mod> {
+        return currentMetadata?.mods!!
     }
 
     fun interface TextHandler {
