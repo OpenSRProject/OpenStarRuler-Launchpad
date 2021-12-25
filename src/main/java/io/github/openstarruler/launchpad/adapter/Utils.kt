@@ -8,7 +8,6 @@ import org.eclipse.jgit.lib.Repository
 import org.eclipse.jgit.treewalk.TreeWalk
 import org.eclipse.jgit.treewalk.filter.PathSuffixFilter
 import java.io.*
-import java.nio.file.Path
 import java.util.stream.Collectors
 
 /** Utility class containing a number of helper functions.  */
@@ -69,11 +68,11 @@ object Utils {
     }
 
     @Throws(FileNotFoundException::class)
-    fun generateModinfoWalker(repo: Repository?, tree: ObjectId?, root: Path?): TreeWalk {
+    fun generateModinfoWalker(repo: Repository?, tree: ObjectId?, root: String?): TreeWalk {
         var result: TreeWalk? = null
         try {
             if(root != null) {
-                result = TreeWalk.forPath(repo, "modinfo.txt", tree)
+                result = TreeWalk.forPath(repo, "$root/modinfo.txt", tree)
             }
             else {
                 result = TreeWalk(repo).apply {

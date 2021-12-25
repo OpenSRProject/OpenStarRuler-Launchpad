@@ -27,10 +27,10 @@ class ModInstallerPane() : GridPane() {
     @FXML lateinit var branchInfo: TextArea
     @FXML lateinit var repoInfo: TextArea
 
-    @FXML lateinit var branchList: ListView<String>
-    @FXML lateinit var modList: ListView<String>
+    @FXML lateinit var branchList: ListView<String?>
+    @FXML lateinit var modList: ListView<String?>
 
-    @FXML lateinit var recommendationList: ListView<String>
+    @FXML lateinit var recommendationList: ListView<String?>
 
     init {
         val fxmlLoader = FXMLLoader(
@@ -46,16 +46,16 @@ class ModInstallerPane() : GridPane() {
     @FXML
     fun initialize() {
         branchList.selectionModel.selectedItemProperty()
-            .addListener { _, _, newValue: String? ->
+            .addListener { _, _, newValue ->
                 setActiveBranch(newValue)
                 updateModList(ModInstaller.listMods())
             }
         recommendationList.selectionModel.selectedIndexProperty()
-            .addListener { _, _, newValue: Number? ->
+            .addListener { _, _, newValue ->
                 urlField.text = if (newValue != null && newValue.toInt() >= 0) recommendationList.items[newValue.toInt()] else ""
             }
         modList.selectionModel.selectedItemProperty()
-            .addListener { _, _, newValue: String? ->
+            .addListener { _, _, newValue ->
                 setSelectedMod(newValue)
             }
         try {
@@ -70,6 +70,7 @@ class ModInstallerPane() : GridPane() {
 
     private fun setSelectedMod(modName: String?) {
         modInfo.text = ModInstaller.getModDescription(modName)
+        installButton.isDisable = !ModInstaller.hasBranch()
     }
 
     private fun updateModList(mods: Map<String, RepoMetadata.Mod>) {
@@ -79,7 +80,7 @@ class ModInstallerPane() : GridPane() {
     private fun setActiveBranch(branchName: String?) {
         branchInfo.text = ModInstaller.setActiveBranch(branchName)
         modInfo.text = "No mods selected"
-        installButton.isDisable = !ModInstaller.hasBranch()
+        installButton.isDisable = !ModInstaller.hasBranch() || modList.selectionModel.selectedItem == null
     }
 
     @FXML
@@ -157,7 +158,8 @@ class ModInstallerPane() : GridPane() {
                                 val msg: Alert = ResizableAlert(AlertType.ERROR, error)
                                 msg.show()
                             }
-                        }
+                        },
+                        modName = modList.selectionModel.selectedItem
                     )
                     return
                 }

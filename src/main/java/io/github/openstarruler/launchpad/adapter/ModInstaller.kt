@@ -298,7 +298,7 @@ object ModInstaller {
 
     @Throws(IOException::class)
     private fun findGitModinfo(
-        root: Path?,
+        root: String?,
         warningHandler: TextHandler?
     ): Modinfo? {
         val repository = repo!!.repository
@@ -392,7 +392,8 @@ object ModInstaller {
         warningHandler: TextHandler,
         progressHandler: TextHandler,
         infoHandler: TextHandler?,
-        errorHandler: TextHandler?
+        errorHandler: TextHandler?,
+        modName: String?
     ) {
         try {
             progressHandler.handle("Checking out target branch or tag...")
@@ -413,7 +414,7 @@ object ModInstaller {
                 progressHandler.handle("Pulling upstream changes...")
                 repo!!.pull().call()
             }
-            installModImpl(repo!!, warningHandler, progressHandler, infoHandler, errorHandler!!, null)
+            installModImpl(repo!!, warningHandler, progressHandler, infoHandler, errorHandler!!, modName)
         } catch (e: RefNotAdvertisedException) {
             errorHandler!!.handle("This branch or tag is no longer visible. It may have been deleted from the origin repository, or it may have been hidden somehow.\n\nThis may often be the case for branches used in beta testing or miscellaneous development; try another one, or contact the mod developers.")
             e.printStackTrace()
@@ -457,7 +458,7 @@ object ModInstaller {
     }
 
     fun getModDescription(modName: String?): String {
-        val modinfo = findGitModinfo(currentMetadata?.mods?.get(modName)?.rootFolder?.let { Path(it) / "" } , null)
+        val modinfo = findGitModinfo(currentMetadata?.mods?.get(modName)?.rootFolder, null)
         return if (modinfo != null) {
             modinfo.description ?: "That's weird. This mod has no description.\n\nWell, it's a Star Ruler 2 mod, at any rate!"
         } else {
