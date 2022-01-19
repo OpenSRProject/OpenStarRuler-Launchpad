@@ -16,4 +16,5 @@ module io.github.openstarruler.launchpad {
 	exports io.github.openstarruler.launchpad.adapter.sr2utils;
 	opens io.github.openstarruler.launchpad.view;
 	opens io.github.openstarruler.launchpad.adapter to com.google.gson;
+	opens io.github.openstarruler.launchpad.model to com.google.gson;
 }
