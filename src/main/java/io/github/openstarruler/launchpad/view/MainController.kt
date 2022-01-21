@@ -1,8 +1,8 @@
 package io.github.openstarruler.launchpad.view
 
 import io.github.openstarruler.launchpad.adapter.ModInstaller
-import io.github.openstarruler.launchpad.adapter.ModInstaller.TextHandler
 import io.github.openstarruler.launchpad.adapter.Settings
+import io.github.openstarruler.launchpad.adapter.TextHandler
 import io.github.openstarruler.launchpad.adapter.Utils
 import javafx.application.Platform
 import javafx.concurrent.Task
@@ -17,7 +17,6 @@ import javafx.stage.Modality
 import javafx.stage.Stage
 import javafx.stage.StageStyle
 import java.io.File
-import java.io.IOException
 import kotlin.system.exitProcess
 
 class MainController {
@@ -44,23 +43,23 @@ class MainController {
         }
         osrPane.playButton = playButton
 
-        var needsConfig = true
-        try {
-            needsConfig = !Settings.load()
-        } catch (e: IOException) {
-            val msg: Alert = ResizableAlert(AlertType.ERROR, "Could not load config.json! Cause: $e")
-            e.printStackTrace()
-            msg.showAndWait()
-        }
-
         if (
-            needsConfig
-            || !File(Settings.instance.gamePath, "Star Ruler 2.exe").exists()
+            Settings.instance.isFirstRun
+        ) {
+            val msg = ResizableAlert(
+                AlertType.INFORMATION,
+                "Welcome to the OpenSR Launchpad!\n\nAs this is your first time running the Launchpad, we probably don't know where you want to install Star Ruler 2 (or where it is already installed).\n\nIf you want to use an existing SR2 installation: Please navigate to the root folder of your SR2 installation, containing the 'data', 'locales', and 'scripts' folders.\n\nIf you want to install a fresh copy of OpenSR instead, please navigate to whatever folder you want to install the game into."
+            )
+            msg.showAndWait()
+            Platform.runLater { setSR2Path() }
+        }
+        else if (
+            !File(Settings.instance.gamePath, "Star Ruler 2.exe").exists()
             && !File(Settings.instance.gamePath, "StarRuler2.sh").exists()
         ) {
             val msg = ResizableAlert(
                 AlertType.WARNING,
-                "Could not detect Star Ruler 2 launchers! Please navigate to the root folder of your SR2 installation, containing the files 'Star Ruler 2.exe' and/or 'StarRuler2.sh'!"
+                "Could not detect Star Ruler 2 launchers! Please navigate to the root folder of your SR2 installation, containing the 'data', 'locales', and 'scripts' folders!"
             )
             msg.showAndWait()
             Platform.runLater { setSR2Path() }

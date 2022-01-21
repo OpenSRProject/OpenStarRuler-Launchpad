@@ -1,21 +1,27 @@
 package io.github.openstarruler.launchpad.view
 
+import io.github.openstarruler.launchpad.adapter.OpenSRManager
 import io.github.openstarruler.launchpad.adapter.Settings
 import io.github.openstarruler.launchpad.adapter.Utils
+import io.github.openstarruler.launchpad.model.Release
+import javafx.application.Platform
+import javafx.concurrent.Task
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.scene.control.*
 import javafx.scene.control.Alert.AlertType
 import javafx.scene.layout.GridPane
 import javafx.stage.DirectoryChooser
+import javafx.stage.Stage
 import javafx.stage.Window
+import javafx.util.Callback
 import java.io.File
 import java.io.IOException
 
 class OpenSRManagerPane : GridPane() {
     lateinit var playButton: Button
 
-    @FXML lateinit var osrVersionList: ListView<String>
+    @FXML lateinit var osrVersionList: ListView<Release?>
     @FXML lateinit var gamePathCaption: Label
     @FXML lateinit var gamePathLabel: Label
     @FXML lateinit var findGameButton: Button
@@ -35,6 +41,15 @@ class OpenSRManagerPane : GridPane() {
 
     @FXML
     fun initialize() {
+        gamePathLabel.text = Settings.instance.gamePath
+        osrVersionList.cellFactory = Callback { ReleaseCell() }
+        osrVersionList.items.setAll(OpenSRManager.openSRVersions)
+        osrVersionList.selectionModel.selectedItemProperty()
+            .addListener { _, _, newValue ->
+                osrVersionInfo.text = newValue?.body ?: ""
+                updateGameButton.isDisable = newValue == null
+            }
+        updateGameButton.isDisable = false
     }
 
     @FXML
@@ -56,22 +71,62 @@ class OpenSRManagerPane : GridPane() {
         if (dir == null || !dir.exists()) return
         val launcher = File(dir, if (Utils.IS_WINDOWS) "Star Ruler 2.exe" else "StarRuler2.sh")
         if (!launcher.exists()) {
-            val msg: Alert =
-                ResizableAlert(AlertType.ERROR, "This is not the root directory of a Star Ruler 2 installation!")
-            msg.showAndWait()
-            setSR2Path(dir, window)
-            return
+            val msg =
+                ResizableAlert(AlertType.WARNING, "This is not the root directory of a Star Ruler 2 installation!")
+            msg.show()
         }
         Settings.instance.gamePath = dir.absolutePath
-        playButton.isDisable = false
+        gamePathLabel.text = Settings.instance.gamePath
+        playButton.isDisable = !launcher.exists()
+        if (Settings.instance.isFirstRun) {
+            val dlg = ResizableAlert(
+                AlertType.CONFIRMATION,
+                "Do you want to install the latest version of OpenSR now? If not, you can install OpenSR later via the 'Manage OpenSR' tab.\n\nWARNING: Steam users may wish to back up their SR2 binaries (the 'bin' folder) first, in order to upload mods to the Steam Workshop.")
+            dlg.dialogPane.buttonTypes.setAll(ButtonType.YES, ButtonType.NO)
+            dlg.headerText = "Install OpenSR now?"
+            dlg.showAndWait()
+                .filter { it == ButtonType.YES }
+                .ifPresent { installOpenSR() }
+        }
+        Settings.instance.isFirstRun = false
         try {
             Settings.instance.save()
         } catch (e: IOException) {
-            val msg: Alert = ResizableAlert(AlertType.WARNING, "Failed to save config file!")
+            val msg = ResizableAlert(AlertType.WARNING, "Failed to save config file!")
             msg.show()
             e.printStackTrace()
         }
     }
 
-    fun installOpenSR() {}
+    fun installOpenSR() {
+        MainController.executeTask("Preparing to install OpenSR...") {
+            taskInstallStage: Stage ->
+            object : Task<Unit>() {
+                override fun call() {
+                    updateMessage("Preparing to install OpenSR...")
+                    OpenSRManager.installOpenSR(
+                        osrVersionList.selectionModel.selectedItem ?: OpenSRManager.openSRVersions.first { it.tagName == "nightly" },
+                        { warning ->
+                            Platform.runLater {
+                                val msg = ResizableAlert(AlertType.WARNING, warning)
+                                msg.show()
+                            }
+                        },
+                        { error ->
+                            Platform.runLater {
+                                val msg = ResizableAlert(AlertType.ERROR, error)
+                                msg.show()
+                            }
+                        },
+                        { message -> updateMessage(message) }
+                    )
+                }
+
+                override fun succeeded() {
+                    taskInstallStage.close()
+                    playButton.isDisable = false
+                }
+            }
+        }
+    }
 }

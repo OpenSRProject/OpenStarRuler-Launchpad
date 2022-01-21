@@ -3,7 +3,6 @@ package io.github.openstarruler.launchpad.adapter
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
-import io.github.openstarruler.launchpad.adapter.ModInstaller.TextHandler
 import io.github.openstarruler.launchpad.model.Modinfo
 import io.github.openstarruler.launchpad.model.RepoMetadata
 import org.eclipse.jgit.api.CreateBranchCommand
@@ -90,8 +89,7 @@ object ModInstaller {
             }
             url = parseRepoURL(url)
             val localRoot = getLocalRoot(url)
-            progressHandler?.handle("Loading repository...")
-            val tmp = cloneRepository(localRoot, url)
+            val tmp = cloneRepository(localRoot, url, GitProgressHandler("Loading repository...", progressHandler))
             if (repo != null)
                 repo!!.close()
             currentBranch = null
@@ -111,11 +109,13 @@ object ModInstaller {
     }
 
     @Throws(GitAPIException::class)
-    private fun cloneRepository(localRoot: Path, url: String): Git {
+    private fun cloneRepository(localRoot: Path, url: String, progressHandler: GitProgressHandler? = null): Git {
         return try {
             Git.open(localRoot.toFile())
         } catch (e: IOException) {
-            val cmd = Git.cloneRepository().setDirectory(localRoot.toFile())
+            val cmd = Git.cloneRepository()
+                .setDirectory(localRoot.toFile())
+                .setProgressMonitor(progressHandler)
             try {
                 cmd.setURI(url).call()
             } catch (e2: Exception) {
@@ -248,7 +248,11 @@ object ModInstaller {
 
         progressHandler.handle("Copying mod files from repository...")
         destination.createDirectories()
-        Files.walkFileTree(source.absolute(), CopyFileVisitor(destination.toAbsolutePath()))
+        var count = Utils.countFiles(source)
+        Files.walkFileTree(
+            source.absolute(),
+            CopyFileVisitor(destination.toAbsolutePath(), FileProgressHandler(count, FormattingTextHandler("Copying mod files from repository... %s", progressHandler)))
+        )
         infoHandler?.handle("Mod successfully installed!")
     }
 
@@ -334,15 +338,16 @@ object ModInstaller {
             }
             val url = parseRepoURL(dependency.repository!!)
             val localRoot = getLocalRoot(url)
-            progressHandler.handle("Loading dependency \"" + dependency.name + "\"...")
-            val depRepo = cloneRepository(localRoot, url)
+            val loadingHandler = GitProgressHandler("Loading dependency \"${dependency.name}\"...", progressHandler)
+            val depRepo = cloneRepository(localRoot, url, loadingHandler)
             depRepo.checkout()
                 .setName(dependency.branch)
+                .setProgressMonitor(loadingHandler)
                 .setCreateBranch(depRepo.repository.resolve("refs/heads/" + dependency.branch) == null)
                 .setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK)
                 .setStartPoint("refs/remotes/origin/" + dependency.branch)
                 .call()
-            depRepo.pull().call()
+            depRepo.pull().setProgressMonitor(loadingHandler).call()
             val internalWarningHandler = TextHandler { text ->
                 warningHandler.handle(
                     String.format(
@@ -396,23 +401,23 @@ object ModInstaller {
         modName: String?
     ) {
         try {
-            progressHandler.handle("Checking out target branch or tag...")
             val isTag = currentBranch!!.name.startsWith("refs/tags/")
             val createBranch = !isTag && repo!!.repository.resolve(
                 currentBranch!!.name.replaceFirst(
-                    "refs/remotes/origin".toRegex(),
+                    "refs/remotes/origin",
                     "refs/heads"
                 )
             ) == null
             repo!!.checkout()
-                .setName(currentBranch!!.name.replaceFirst("refs/remotes/origin/".toRegex(), ""))
+                .setProgressMonitor(GitProgressHandler("Checking out target branch or tag...", progressHandler))
+                .setName(currentBranch!!.name.replaceFirst("refs/remotes/origin/", ""))
                 .setCreateBranch(createBranch)
                 .setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK)
                 .setStartPoint(currentBranch!!.name)
                 .call()
             if (!isTag) {
-                progressHandler.handle("Pulling upstream changes...")
-                repo!!.pull().call()
+                repo!!.pull()
+                    .setProgressMonitor(GitProgressHandler("Pulling upstream changes...", progressHandler)).call()
             }
             installModImpl(repo!!, warningHandler, progressHandler, infoHandler, errorHandler!!, modName)
         } catch (e: RefNotAdvertisedException) {
@@ -470,7 +475,4 @@ object ModInstaller {
         return currentMetadata?.mods!!
     }
 
-    fun interface TextHandler {
-        fun handle(text: String)
-    }
 }

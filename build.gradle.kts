@@ -17,6 +17,9 @@ dependencies {
     implementation("com.google.code.gson:gson:2.8.9")
     implementation("org.jetbrains:annotations:23.0.0")
     implementation(kotlin("stdlib-jdk8"))
+
+    implementation(platform("com.squareup.okhttp3:okhttp-bom:4.9.3"))
+    implementation("com.squareup.okhttp3:okhttp")
 }
 
 java {

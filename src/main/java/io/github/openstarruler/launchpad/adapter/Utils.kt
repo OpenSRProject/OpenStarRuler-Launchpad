@@ -8,7 +8,13 @@ import org.eclipse.jgit.lib.Repository
 import org.eclipse.jgit.treewalk.TreeWalk
 import org.eclipse.jgit.treewalk.filter.PathSuffixFilter
 import java.io.*
+import java.nio.file.FileVisitResult
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.SimpleFileVisitor
+import java.nio.file.attribute.BasicFileAttributes
 import java.util.stream.Collectors
+import kotlin.io.path.absolute
 
 /** Utility class containing a number of helper functions.  */
 object Utils {
@@ -65,6 +71,18 @@ object Utils {
         }
         if (result == null) throw FileNotFoundException("Could not find README.md!")
         return result
+    }
+
+    fun countFiles(source: Path): Int {
+        var count = 0
+        Files.walkFileTree(source.absolute(), object: SimpleFileVisitor<Path>() {
+            @Throws(IOException::class)
+            override fun visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult {
+                count++
+                return FileVisitResult.CONTINUE
+            }
+        })
+        return count
     }
 
     @Throws(FileNotFoundException::class)

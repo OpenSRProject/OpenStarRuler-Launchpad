@@ -1,8 +1,8 @@
 package io.github.openstarruler.launchpad.view
 
 import io.github.openstarruler.launchpad.adapter.ModInstaller
-import io.github.openstarruler.launchpad.adapter.ModInstaller.TextHandler
 import io.github.openstarruler.launchpad.adapter.Recommendations
+import io.github.openstarruler.launchpad.adapter.TextHandler
 import io.github.openstarruler.launchpad.model.RepoMetadata
 import javafx.application.Platform
 import javafx.concurrent.Task

@@ -10,6 +10,7 @@ module io.github.openstarruler.launchpad {
 	requires java.desktop;
 	requires static org.jetbrains.annotations;
 	requires java.security.jgss;
+	requires okhttp3;
 
 	exports io.github.openstarruler.launchpad.adapter;
 	exports io.github.openstarruler.launchpad.model;

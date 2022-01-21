@@ -7,7 +7,7 @@ import java.nio.file.Path
 import java.nio.file.SimpleFileVisitor
 import java.nio.file.attribute.BasicFileAttributes
 
-class CopyFileVisitor(private val targetPath: Path) : SimpleFileVisitor<Path>() {
+class CopyFileVisitor(private val targetPath: Path, private val fileHandler: FileProgressHandler? = null) : SimpleFileVisitor<Path>() {
     private var sourcePath: Path? = null
 
     @Throws(IOException::class)
@@ -22,6 +22,7 @@ class CopyFileVisitor(private val targetPath: Path) : SimpleFileVisitor<Path>() 
 
     @Throws(IOException::class)
     override fun visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult {
+        fileHandler?.handle()
         Files.copy(file, targetPath.resolve(sourcePath!!.relativize(file)))
         return FileVisitResult.CONTINUE
     }
