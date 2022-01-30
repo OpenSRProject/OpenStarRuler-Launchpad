@@ -73,6 +73,7 @@ class OpenSRManagerPane : GridPane() {
         if (!launcher.exists()) {
             val msg =
                 ResizableAlert(AlertType.WARNING, "This is not the root directory of a Star Ruler 2 installation!")
+            msg.initOwner(scene.window)
             msg.show()
         }
         Settings.instance.gamePath = dir.absolutePath
@@ -84,6 +85,7 @@ class OpenSRManagerPane : GridPane() {
                 "Do you want to install the latest stable version of OpenSR now? If not, you can install OpenSR later via the 'Manage OpenSR' tab.\n\nWARNING: Steam users may wish to back up their SR2 binaries (the 'bin' folder) first, in order to upload mods to the Steam Workshop.")
             dlg.dialogPane.buttonTypes.setAll(ButtonType.YES, ButtonType.NO)
             dlg.headerText = "Install OpenSR now?"
+            dlg.initOwner(scene.window)
             dlg.showAndWait()
                 .filter { it == ButtonType.YES }
                 .ifPresent { installOpenSR() }
@@ -93,6 +95,7 @@ class OpenSRManagerPane : GridPane() {
             Settings.instance.save()
         } catch (e: IOException) {
             val msg = ResizableAlert(AlertType.WARNING, "Failed to save config file!")
+            msg.initOwner(scene.window)
             msg.show()
             e.printStackTrace()
         }
@@ -109,12 +112,14 @@ class OpenSRManagerPane : GridPane() {
                         { warning ->
                             Platform.runLater {
                                 val msg = ResizableAlert(AlertType.WARNING, warning)
+                                msg.initOwner(scene.window)
                                 msg.show()
                             }
                         },
                         { error ->
                             Platform.runLater {
                                 val msg = ResizableAlert(AlertType.ERROR, error)
+                                msg.initOwner(scene.window)
                                 msg.show()
                             }
                         },

@@ -205,6 +205,7 @@ class MainController {
             taskPane.children.addAll(taskLabel, progress)
 
             val taskStage = Stage(StageStyle.UTILITY)
+            ResizableAlert.setIcon(taskStage)
             taskStage.initModality(Modality.APPLICATION_MODAL)
             taskStage.isResizable = true
             taskStage.scene = Scene(taskPane)
