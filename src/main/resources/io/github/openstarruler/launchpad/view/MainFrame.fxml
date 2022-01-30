@@ -28,7 +28,7 @@
     </top>
     <center>
         <TabPane tabClosingPolicy="UNAVAILABLE" fx:id="tabs">
-            <Tab fx:id="modsTab" text="Manage Mods">
+            <Tab fx:id="modsTab" text="Manage Mods (TBD)" disable="true">
                 <ModManagerPane fx:id="modsPane" />
             </Tab>
             <Tab fx:id="installerTab" text="Install Mods">
