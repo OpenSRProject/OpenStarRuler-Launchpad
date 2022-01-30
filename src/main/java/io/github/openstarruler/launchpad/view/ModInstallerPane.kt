@@ -16,6 +16,8 @@ import java.io.IOException
 
 
 class ModInstallerPane() : GridPane() {
+    lateinit var deleteRepositoryItem: MenuItem
+
     @FXML lateinit var connectButton: Button
     @FXML lateinit var installButton: Button
 
@@ -85,6 +87,7 @@ class ModInstallerPane() : GridPane() {
 
     @FXML
     private fun connectToRepository() {
+        deleteRepositoryItem.isDisable = true
         MainController.executeTask(
             "Loading repository..."
         ) { taskUpdateStage: Stage ->
@@ -125,6 +128,7 @@ class ModInstallerPane() : GridPane() {
                 }
 
                 override fun succeeded() {
+                    deleteRepositoryItem.isDisable = false
                     taskUpdateStage.close()
                 }
             }
@@ -207,14 +211,15 @@ class ModInstallerPane() : GridPane() {
             .filter { response: ButtonType -> response == ButtonType.YES }
             .ifPresent {
                 if (ModInstaller.deleteRepository { error: String? ->
-                        val msg = ResizableAlert(AlertType.ERROR, error)
-                        msg.show()
+                        ResizableAlert(AlertType.ERROR, error).show()
                     }) {
                     branchList.items.clear()
                     modList.items.clear()
                     modInfo.text = ""
                     branchInfo.text = ""
                     repoInfo.text = ""
+                    ResizableAlert(AlertType.INFORMATION, "Repository successfully deleted!").show()
+                    deleteRepositoryItem.isDisable = true
                 }
             }
     }
@@ -222,7 +227,7 @@ class ModInstallerPane() : GridPane() {
     fun uninstallMod() {
         val dialog = ResizableAlert(
             AlertType.CONFIRMATION,
-            "Are you sure you want to uninstall this mod? The associated repository will not be removed from your computer."
+            "Are you sure you want to uninstall this mod? The associated repository will not be removed from your computer, but SR2 will no longer be able to run the mod."
         )
         val dlgButtons = dialog.dialogPane.buttonTypes
         dlgButtons.clear()
@@ -232,13 +237,12 @@ class ModInstallerPane() : GridPane() {
         dialog.showAndWait()
             .filter { response: ButtonType -> response == ButtonType.YES }
             .ifPresent {
-                ModInstaller.uninstallMod(
-                    { error: String? ->
-                        val msg = ResizableAlert(AlertType.ERROR, error)
-                        msg.show()
-                    },
+                if(ModInstaller.uninstallMod(
+                    { error: String? -> ResizableAlert(AlertType.ERROR, error).show() },
                     modList.selectionModel.selectedItem
-                )
+                )) {
+                    ResizableAlert(AlertType.INFORMATION, "Mod successfully uninstalled!").show()
+                }
             }
     }
 }

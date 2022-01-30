@@ -291,8 +291,7 @@ object ModInstaller {
         return if (finder.result != null) {
             folderName = finder.result!!.parent.fileName.toString()
             if (Files.isSameFile(finder.result!!.parent, root)) {
-                inRoot = true // The modinfo is in the repository root, so we can't discard metadata.
-                warningHandler?.handle("WARNING: Unable to discard repository metadata!\n\nTo improve loading times, it is recommended that you delete the installed mod's .git folder once installation is completed.")
+                inRoot = true
             }
             Modinfo(inRoot, folderName, finder.result!!.toFile())
         } else {

@@ -42,6 +42,7 @@ class MainController {
             uninstallModItem.isDisable = newTab !== installerTab
         }
         osrPane.playButton = playButton
+        installerPane.deleteRepositoryItem = deleteRepositoryItem
 
         if (
             Settings.instance.isFirstRun
@@ -81,6 +82,7 @@ class MainController {
         val dir = chooser.showDialog(playButton.scene.window)
             ?: return // Anything on the window would suffice, playButton was just arbitrarily selected.
 
+        deleteRepositoryItem.isDisable = true
         executeTask("Loading repository...") { taskUpdateStage: Stage ->
             object : Task<Unit>() {
                 override fun call() {
@@ -105,6 +107,7 @@ class MainController {
                 }
 
                 override fun succeeded() {
+                    deleteRepositoryItem.isDisable = false
                     taskUpdateStage.close()
                 }
             }
@@ -186,13 +189,15 @@ class MainController {
             taskBuilder: (Stage) -> Task<Unit>
         ) {
             // Start preparing the task.
-            val wndwWidth = 400.0
+            val wndwWidth = 800.0
             val taskLabel = Label(initialText)
-            taskLabel.prefWidth = wndwWidth - 20
+            taskLabel.padding = Insets(0.0, 20.0, 0.0, 0.0)
+            taskLabel.maxWidth = Double.MAX_VALUE
             taskLabel.isWrapText = true
+            taskLabel.textOverrun = OverrunStyle.CENTER_ELLIPSIS
 
             val progress = ProgressBar()
-            progress.prefWidth = wndwWidth
+            progress.maxWidth = Double.MAX_VALUE
 
             val taskPane = VBox()
             taskPane.padding = Insets(10.0, 10.0, 30.0, 10.0)
@@ -201,7 +206,9 @@ class MainController {
 
             val taskStage = Stage(StageStyle.UTILITY)
             taskStage.initModality(Modality.APPLICATION_MODAL)
+            taskStage.isResizable = true
             taskStage.scene = Scene(taskPane)
+            taskStage.width = wndwWidth
             taskStage.show()
 
             val task = taskBuilder(taskStage)
