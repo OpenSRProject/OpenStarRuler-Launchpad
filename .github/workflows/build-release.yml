@@ -78,5 +78,5 @@ jobs:
       - name: Attach artifacts
         uses: softprops/action-gh-release@v1
         with:
-          files: '/home/runner/work/OpenStarRuler-Launchpad/OpenStarRuler-Launchpad/OpenSR Launchpad*.zip'
+          files: '**/OpenSR Launchpad*.zip'
           fail_on_unmatched_files: true
