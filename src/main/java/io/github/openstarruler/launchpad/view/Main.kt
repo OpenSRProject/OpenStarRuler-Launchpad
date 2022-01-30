@@ -22,7 +22,8 @@ class OSRLaunchpadApplication : Application() {
         }
 
         try {
-            val root = FXMLLoader.load<Parent>(javaClass.getResource("MainFrame.fxml"))
+            ResizableAlert.setIcon(primaryStage)
+            val root: Parent = FXMLLoader.load(javaClass.getResource("MainFrame.fxml"))
             val scene = Scene(root)
             primaryStage.title = "OpenSR Launchpad"
             primaryStage.scene = scene

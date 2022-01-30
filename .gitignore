@@ -18,7 +18,9 @@ build
 !/gradle/wrapper/gradle-wrapper.jar
 scenicView.*
 .attach_pid*
+.classpath
 .project
+bin
 .settings
 hs_err*.log
 replay*.log
