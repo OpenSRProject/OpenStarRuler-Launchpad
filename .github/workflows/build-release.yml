@@ -34,9 +34,10 @@ jobs:
         run: '"cd build/image/bin && OSRLaunchpad.bat" > OSRLaunchpad.bat'
         shell: powershell
       - name: Pack standalone release
-        run: 'Rename-Item README.md README.txt'
-        run: 'Copy-Item -Path README.txt,history.json,LICENSE.txt,build/image/*,OSRLaunchpad.bat -Destination "OpenStarRuler-Launchpad" -Recurse'
-        run: 'Compress-Archive -Path "OpenStarRuler-Launchpad" -DestinationPath "standalone-windows.zip"'
+        run: |
+          'Rename-Item README.md README.txt'
+          'Copy-Item -Path README.txt,history.json,LICENSE.txt,build/image/*,OSRLaunchpad.bat -Destination "OpenStarRuler-Launchpad" -Recurse'
+          'Compress-Archive -Path "OpenStarRuler-Launchpad" -DestinationPath "standalone-windows.zip"'
         shell: powershell
       - name: Upload standalone release
         uses: actions/upload-artifact@v2
