@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     application
     id("org.openjfx.javafxplugin") version "0.0.10"
+    id("org.javamodularity.moduleplugin") version "1.8.10"
     id("org.beryx.jlink") version "2.24.4"
     kotlin("jvm") version "1.6.10"
 }
