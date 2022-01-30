@@ -81,7 +81,7 @@ class OpenSRManagerPane : GridPane() {
         if (Settings.instance.isFirstRun) {
             val dlg = ResizableAlert(
                 AlertType.CONFIRMATION,
-                "Do you want to install the latest version of OpenSR now? If not, you can install OpenSR later via the 'Manage OpenSR' tab.\n\nWARNING: Steam users may wish to back up their SR2 binaries (the 'bin' folder) first, in order to upload mods to the Steam Workshop.")
+                "Do you want to install the latest stable version of OpenSR now? If not, you can install OpenSR later via the 'Manage OpenSR' tab.\n\nWARNING: Steam users may wish to back up their SR2 binaries (the 'bin' folder) first, in order to upload mods to the Steam Workshop.")
             dlg.dialogPane.buttonTypes.setAll(ButtonType.YES, ButtonType.NO)
             dlg.headerText = "Install OpenSR now?"
             dlg.showAndWait()
@@ -105,7 +105,7 @@ class OpenSRManagerPane : GridPane() {
                 override fun call() {
                     updateMessage("Preparing to install OpenSR...")
                     OpenSRManager.installOpenSR(
-                        osrVersionList.selectionModel.selectedItem ?: OpenSRManager.openSRVersions.first { it.tagName == "nightly" },
+                        osrVersionList.selectionModel.selectedItem ?: OpenSRManager.openSRVersions.first { it.tagName == "stable" },
                         { warning ->
                             Platform.runLater {
                                 val msg = ResizableAlert(AlertType.WARNING, warning)

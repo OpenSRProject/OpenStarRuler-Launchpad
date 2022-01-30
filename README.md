@@ -45,7 +45,7 @@ On Linux, the equivalent action is to run `OSRLaunchpad`.
 
 When you first start the Launchpad, you will be prompted to navigate to your Star Ruler 2 installation. If you do not have one, or if you do not want to install OpenSR on top of your existing installation, you should instead select an empty folder.
 
-After this is done, you will be asked if you want to install the latest version of OpenSR now. This is recommended, but if you choose not to do it, you may do so later at any time.
+After this is done, you will be asked if you want to install the latest stable version of OpenSR now. This is recommended, but if you choose not to do it, you may do so later at any time.
 
 **WARNING:** The binaries distributed with Steam copies of Star Ruler 2 are the only ones capable of connecting to the Steam Workshop to upload new mods to the Workshop. If you are a modder (or expect to become one later), and have a Steam copy of the game, you should make a backup of the game's `bin` folder before you install OpenSR. If you do not do this, you will not be able to upload mods to the Steam Workshop! (This does not prevent you from installing mods from the Workshop, though. Automatic backup functionality may be added to the Launchpad at a later date.)
 
@@ -55,7 +55,7 @@ Installing/updating OpenSR is a fairly straightforward process. Start by switchi
 
 If you have not yet selected an installation directory, or if you want to install/update to a different directory, you may do so now via the "Set SR2 Path" button.
 
-Select your preferred version of OpenSR from the list in the upper left section of the window, then press the "Update Game" button. If you do not select any version, the Launchpad will default to installing the "Nightly build" release.
+Select your preferred version of OpenSR from the list in the upper left section of the window, then press the "Update Game" button. If you do not select any version, the Launchpad will default to installing the latest stable version.
 
 If this is your first time installing OpenSR to this directory, you may need to wait a while for the data repository to be downloaded. Download sizes for the OpenSR-Data repository are estimated at around 500MB, and the complete game is a little under 900MB. Be advised that the Launchpad needs to maintain both the data repository and the game itself, so the total size of the game should be around 1.4-1.5GB. (Mods - especially shipset mods - and user data may inflate this figure considerably. To avoid running out of space, it is recommended that you reserve at least 25GB of disk space for OpenSR. For reference, at the time of writing, the author of this readme loosely estimated that he had ~6.5GB of Workshop mods, ~600MB of user data, and ~2.9GB of non-Steam mods on his machine. In terms of raw size, this probably encompasses a large proportion of all Star Ruler 2 mods ever released to the public, but that's no reason not to future-proof your game with a generous dose of padding.)
 
