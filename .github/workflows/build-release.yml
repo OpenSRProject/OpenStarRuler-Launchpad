@@ -31,7 +31,7 @@ jobs:
       - name: Build standalone release
         run: ./gradlew jlink
       - name: Create standalone launcher
-        run: '"cd build/image/bin && OSRLaunchpad.bat" > OSRLaunchpad.bat'
+        run: '"cd bin && OSRLaunchpad.bat" | Out-File -FilePath OpenStarRuler-Launchpad\OSRLauncher.bat -Encoding "ascii"'
         shell: powershell
       - name: Pack standalone release
         run: New-Item -Name "OpenStarRuler-Launchpad" -ItemType "directory"; Rename-Item README.md README.txt; Copy-Item -Path README.txt,history.json,LICENSE.txt,build/image/*,OSRLaunchpad.bat -Destination "OpenStarRuler-Launchpad" -Recurse; Compress-Archive -Path "OpenStarRuler-Launchpad" -DestinationPath "standalone-windows.zip"
