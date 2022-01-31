@@ -7,7 +7,13 @@ import java.io.FileWriter
 import java.io.IOException
 
 class Recommendations private constructor() {
-    private val history: MutableList<String> = mutableListOf()
+    private val history: MutableList<String> = mutableListOf(
+        "github.com/OpenSRProject/OpenStarRuler-Modpack",
+        "github.com/DaloLorn/Rising-Stars",
+        "github.com/Skeletonxf/star-ruler-2-mod-ce",
+        "github.com/sol-oriens/Shores-of-Infinity",
+        "github.com/Vandaria/SR2-Lost-Sector"
+    )
 
     @Throws(IOException::class)
     fun save() {

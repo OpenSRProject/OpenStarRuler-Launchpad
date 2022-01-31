@@ -4,6 +4,7 @@
 .idea/sonarlint
 .DS_Store
 config.json
+history.json
 out
 repositories/*
 Thumbs.db
