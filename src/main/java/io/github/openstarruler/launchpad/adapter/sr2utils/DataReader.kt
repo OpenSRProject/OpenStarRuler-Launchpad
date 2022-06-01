@@ -161,7 +161,7 @@ class DataReader {
         pattern = pattern.lowercase()
         if (pattern.isEmpty()) return emptyList()
         val compiled = mutableListOf(*pattern.split("\\*").toTypedArray())
-        if (pattern.endsWith("*")) compiled.add("")
+        if (pattern.endsWith("*")) compiled += ""
         return compiled
     }
 }

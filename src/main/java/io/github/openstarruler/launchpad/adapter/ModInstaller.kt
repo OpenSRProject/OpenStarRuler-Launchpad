@@ -99,7 +99,7 @@ object ModInstaller {
         } catch (e: Exception) {
             if (errorHandler != null) {
                 if (e.cause is NotSupportedException && (e.cause as NotSupportedException).message!!.startsWith("URI not supported: "))
-                    errorHandler.handle("Not a valid Git URL!\n\nThe URL provided isn't a valid Git URL.\n\nPlease make sure you entered the correct URL, and contact the SR2MM developers if the problem persists.")
+                    errorHandler.handle("Not a valid Git URL!\n\nThe URL provided isn't a valid Git URL.\n\nPlease make sure you entered the correct URL, and contact the OpenSR team if the problem persists.")
                 else
                     errorHandler.handle(ENCOUNTERED_AN_EXCEPTION + e)
             }
@@ -156,7 +156,7 @@ object ModInstaller {
             branches.clear()
             for (tag in tags) {
                 val tagName = tag.name.replaceFirst("refs/remotes/origin/|refs/tags/".toRegex(), "")
-                tagNames.add(tagName)
+                tagNames += tagName
                 branches[tagName] = tag
             }
             tagNames

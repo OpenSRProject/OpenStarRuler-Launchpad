@@ -70,6 +70,9 @@ class OpenSRManagerPane : GridPane() {
         val dir = chooser.showDialog(window)
         if (dir == null || !dir.exists()) return
         val launcher = File(dir, if (Utils.IS_WINDOWS) "Star Ruler 2.exe" else "StarRuler2.sh")
+        // TODO: This message doesn't make sense when installing OpenSR from scratch.
+        //       However, it's still useful if you're trying to upgrade an existing
+        //       installation of SR2.
         if (!launcher.exists()) {
             val msg =
                 ResizableAlert(AlertType.WARNING, "This is not the root directory of a Star Ruler 2 installation!")

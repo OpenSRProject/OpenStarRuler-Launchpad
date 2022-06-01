@@ -204,8 +204,8 @@ class ModInstallerPane() : GridPane() {
         )
         val dlgButtons = dialog.dialogPane.buttonTypes
         dlgButtons.clear()
-        dlgButtons.add(ButtonType.YES)
-        dlgButtons.add(ButtonType.NO)
+        dlgButtons += ButtonType.YES
+        dlgButtons += ButtonType.NO
         dialog.headerText = "Delete Repository?"
         dialog.showAndWait()
             .filter { response: ButtonType -> response == ButtonType.YES }
@@ -231,8 +231,8 @@ class ModInstallerPane() : GridPane() {
         )
         val dlgButtons = dialog.dialogPane.buttonTypes
         dlgButtons.clear()
-        dlgButtons.add(ButtonType.YES)
-        dlgButtons.add(ButtonType.NO)
+        dlgButtons += ButtonType.YES
+        dlgButtons += ButtonType.NO
         dialog.headerText = "Uninstall Mod?"
         dialog.showAndWait()
             .filter { response: ButtonType -> response == ButtonType.YES }

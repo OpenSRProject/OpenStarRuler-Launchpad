@@ -32,10 +32,12 @@ class Recommendations private constructor() {
     @Throws(IOException::class)
     fun addItem(url: String) {
         // Removing it so it gets added to the start of the list again
-        history.remove(url)
-        history.add(0, url)
-        while (history.size > HISTORY_SIZE_LIMIT) {
-            history.removeAt(HISTORY_SIZE_LIMIT)
+        with(history) {
+            remove(url)
+            add(0, url)
+            while (size > HISTORY_SIZE_LIMIT) {
+                removeAt(HISTORY_SIZE_LIMIT)
+            }
         }
         save()
     }

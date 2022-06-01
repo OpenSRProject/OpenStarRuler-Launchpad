@@ -6,7 +6,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 
 object GitHub {
-    val GH_API = "https://api.github.com"
+    const val GH_API = "https://api.github.com"
 
     fun getReleasesUrl(owner: String = "OpenSRProject", repo: String): String {
         return "$GH_API/repos/$owner/$repo/releases"
