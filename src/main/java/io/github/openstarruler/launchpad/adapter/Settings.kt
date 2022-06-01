@@ -1,6 +1,7 @@
 package io.github.openstarruler.launchpad.adapter
 
 import com.google.gson.Gson
+import io.github.openstarruler.launchpad.adapter.sr2utils.ModEnumerator
 import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
@@ -17,10 +18,7 @@ class Settings private constructor() {
     // %USERPROFILE%/Documents/My Games/Star Ruler 2/mods
     val modsFolder: Path
         get() = if (installToUser) {
-            if (Utils.IS_WINDOWS) {
-                // %USERPROFILE%/Documents/My Games/Star Ruler 2/mods
-                Path(System.getProperty("user.home")) / "Documents" / "My Games" / "Star Ruler 2" / "mods"
-            } else Path(System.getProperty("user.home")) / ".starruler2" / "mods"
+            ModEnumerator.profileRoot / "mods"
         } else Path(gamePath) / "mods"
 
     @Throws(IOException::class)

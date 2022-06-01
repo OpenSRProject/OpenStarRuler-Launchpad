@@ -23,20 +23,21 @@ class MainController {
     // Shared UI components.
     @FXML private lateinit var playButton: Button
 
-    @FXML private lateinit var tabs: TabPane
-    @FXML private lateinit var modsTab: Tab
-    @FXML private lateinit var installerTab: Tab
-    @FXML private lateinit var osrTab: Tab
+    @FXML internal lateinit var tabs: TabPane
+    @FXML internal lateinit var modsTab: Tab
+    @FXML internal lateinit var installerTab: Tab
+    @FXML internal lateinit var osrTab: Tab
 
     @FXML private lateinit var openRepositoryItem: MenuItem
     @FXML private lateinit var deleteRepositoryItem: MenuItem
     @FXML private lateinit var uninstallModItem: MenuItem
 
-    @FXML private lateinit var modsPane: ModManagerPane
-    @FXML private lateinit var installerPane: ModInstallerPane
-    @FXML private lateinit var osrPane: OpenSRManagerPane
+    @FXML internal lateinit var modsPane: ModManagerPane
+    @FXML internal lateinit var installerPane: ModInstallerPane
+    @FXML internal lateinit var osrPane: OpenSRManagerPane
 
     fun initialize() {
+        controller = this
         tabs.selectionModel.selectedItemProperty().addListener { _, _, newTab ->
             deleteRepositoryItem.isDisable = newTab !== installerTab || !ModInstaller.hasRepo()
             uninstallModItem.isDisable = newTab !== installerTab
@@ -65,11 +66,17 @@ class MainController {
             msg.showAndWait()
             Platform.runLater { setSR2Path() }
         }
+        else refreshMods()
     }
 
     @FXML
     private fun setSR2Path() {
         osrPane.setSR2Path()
+    }
+
+    @FXML
+    private fun refreshMods() {
+        modsPane.refreshMods()
     }
 
     @FXML
@@ -119,8 +126,8 @@ class MainController {
         val dialog = ResizableAlert(AlertType.CONFIRMATION, "Quit OpenSR Launchpad?")
         val dlgButtons = dialog.dialogPane.buttonTypes
         dlgButtons.clear()
-        dlgButtons.add(ButtonType.YES)
-        dlgButtons.add(ButtonType.NO)
+        dlgButtons += ButtonType.YES
+        dlgButtons += ButtonType.NO
         dialog.headerText = "Quit OpenSR Launchpad"
         dialog.showAndWait()
             .filter { response: ButtonType -> response == ButtonType.YES }
@@ -170,7 +177,7 @@ class MainController {
                 .directory(launcher.parentFile)
                 .start()
         } catch (e: Exception) {
-            val msg = ResizableAlert(AlertType.ERROR, String.format("Cannot start Star Ruler 2: %s", e))
+            val msg = ResizableAlert(AlertType.ERROR, "Cannot start Star Ruler 2: $e")
             e.printStackTrace()
             msg.showAndWait()
         }
@@ -184,6 +191,8 @@ class MainController {
     }
 
     companion object {
+        lateinit var controller: MainController
+
         fun executeTask(
             initialText: String,
             taskBuilder: (Stage) -> Task<Unit>

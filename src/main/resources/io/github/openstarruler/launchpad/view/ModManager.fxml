@@ -7,5 +7,5 @@
          fx:controller="io.github.openstarruler.launchpad.view.ModManagerPane"
          prefHeight="400.0" prefWidth="750.0"
          hbarPolicy="NEVER">
-        <VBox prefWidth="750.0" />
+        <VBox prefWidth="750.0" fx:id="modList"/>
 </fx:root>

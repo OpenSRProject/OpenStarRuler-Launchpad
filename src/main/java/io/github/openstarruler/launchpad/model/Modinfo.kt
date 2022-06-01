@@ -5,17 +5,19 @@ import org.eclipse.jgit.lib.ObjectLoader
 import java.io.File
 
 class Modinfo(val inRoot: Boolean, val folderName: String, val dataReader: DataReader) {
-    private var name: String? = null
+    internal var name: String? = null
     internal var description: String? = null
-    private var parentName: String? = null
+    internal var parentName: String? = null
     private var version = 0
-    private var compatibility = 0
-    private var isBase = false
+    internal var compatibility = 0
+    internal var isBase = false
     private var listed = false
-    private var forCurrentVersion = false
-    private var overrides: MutableList<String?> = mutableListOf()
+    internal var forCurrentVersion = false
+    internal var overrides: MutableList<String?> = mutableListOf()
     private var overridePatterns: MutableList<List<String?>?> = mutableListOf()
     private var fallbacks: MutableMap<Int, String?> = mutableMapOf()
+    internal var repository: String? = null
+    internal var branch: String? = null
 
     constructor(inRoot: Boolean, folderName: String, file: File) : this(inRoot, folderName, dataReader = DataReader(file))
 
@@ -32,11 +34,11 @@ class Modinfo(val inRoot: Boolean, val folderName: String, val dataReader: DataR
             } else if (key.equals("Description", ignoreCase = true)) {
                 description = value
             } else if (key.equals("Override", ignoreCase = true)) {
-                overrides.add(value)
+                overrides += value
                 val compiled = file.compilePattern(value)
-                overridePatterns.add(compiled)
+                overridePatterns += compiled
             } else if (key.equals("Derives From", ignoreCase = true)) {
-                parentName = if (value == "-") "" else value
+                parentName = if (value == "-") null else value
             } else if (key.equals("Base Mod", ignoreCase = true)) {
                 isBase = java.lang.Boolean.parseBoolean(value)
             } else if (key.equals("Listed", ignoreCase = true)) {
@@ -49,12 +51,16 @@ class Modinfo(val inRoot: Boolean, val folderName: String, val dataReader: DataR
             } else if (key.equals("Fallback", ignoreCase = true)) {
                 file.splitKeyValue(value, '=')
                 fallbacks[file.value.toInt()] = file.key
+            } else if (key.equals("Repository", ignoreCase = true)) {
+                repository = value
+            } else if (key.equals("Branch", ignoreCase = true)) {
+                branch = value
             }
         }
     }
 
     companion object {
-        private const val CUR_COMPATIBILITY = 200
+        const val CUR_COMPATIBILITY = 200
     }
 
     init {
