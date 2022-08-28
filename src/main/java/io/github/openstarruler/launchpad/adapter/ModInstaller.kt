@@ -215,9 +215,17 @@ object ModInstaller {
             try {
                 Files.newBufferedReader(metadata).use { reader ->
                     meta = Gson().fromJson(reader, RepoMetadata::class.java)
-                    meta?.dependencies?.forEach { dependency ->
-                        if (!installDependency(dependency, progressHandler, warningHandler))
-                            warningHandler.handle("WARNING: Failed to install dependency ${dependency.name}!\n\nThe mod may behave erratically or fail to start. Please try to install the dependency manually, or contact the mod (and/or dependency) developers.")
+                    if(modName != null && meta?.mods?.containsKey(modName) == true) {
+                        meta?.mods?.get(modName)?.dependencies?.forEach { dependency ->
+                            if (!installDependency(dependency, progressHandler, warningHandler))
+                                warningHandler.handle("WARNING: Failed to install dependency ${dependency.name}!\n\nThe mod may behave erratically or fail to start. Please try to install the dependency manually, or contact the mod (and/or dependency) developers.")
+                        }
+                    }
+                    else {
+                        meta?.dependencies?.forEach { dependency ->
+                            if (!installDependency(dependency, progressHandler, warningHandler))
+                                warningHandler.handle("WARNING: Failed to install dependency ${dependency.name}!\n\nThe mod may behave erratically or fail to start. Please try to install the dependency manually, or contact the mod (and/or dependency) developers.")
+                        }
                     }
                 }
             } catch (e: Exception) {
