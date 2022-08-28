@@ -148,7 +148,7 @@ class MainController {
             """
                   OpenSR Launchpad
                   
-                  Version: 2.0.0
+                  Version: 2.0.1
                   
                   GitHub: https://github.com/OpenSRProject/OpenStarRuler-Launchpad
                   Discord: https://discord.gg/sUJKJDc
