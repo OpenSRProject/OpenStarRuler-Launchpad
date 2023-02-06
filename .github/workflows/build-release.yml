@@ -11,19 +11,19 @@ jobs:
     name: Build Windows ZIPs
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK 11
-        uses: actions/setup-java@v2
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
         with:
-          java-version: 11
-          distribution: adopt
+          java-version: 17
+          distribution: temurin
       - name: Validate Gradle wrapper
-        uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
+        uses: gradle/wrapper-validation-action@v1
 
       - name: Build standard release
         run: ./gradlew distZip
       - name: Upload standard release
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: OpenSR Launchpad ${{github.ref_name}} (Standard-Windows).zip
           path: build/distributions/OpenStarRuler-Launchpad.zip
@@ -37,7 +37,7 @@ jobs:
         run: New-Item -Name "OpenStarRuler-Launchpad" -ItemType "directory"; Rename-Item README.md README.txt; Copy-Item -Path README.txt,LICENSE.txt,build/image/*,OSRLaunchpad.bat -Destination "OpenStarRuler-Launchpad" -Recurse; Compress-Archive -Path "OpenStarRuler-Launchpad" -DestinationPath "standalone-windows.zip"
         shell: powershell
       - name: Upload standalone release
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: OpenSR Launchpad ${{github.ref_name}} (Standalone-Win64).zip
           path: standalone-windows.zip
@@ -45,19 +45,19 @@ jobs:
   build-linux:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK 11
-        uses: actions/setup-java@v2
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
         with:
-          java-version: 11
-          distribution: adopt
+          java-version: 17
+          distribution: temurin
       - name: Validate Gradle wrapper
-        uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
+        uses: gradle/wrapper-validation-action@v1
 
       - name: Build standard release
         run: ./gradlew distZip
       - name: Upload standard release
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: OpenSR Launchpad ${{github.ref_name}} (Standard-Linux).zip
           path: build/distributions/OpenStarRuler-Launchpad.zip
@@ -74,7 +74,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
       - name: Attach artifacts
         uses: softprops/action-gh-release@v1
         with:

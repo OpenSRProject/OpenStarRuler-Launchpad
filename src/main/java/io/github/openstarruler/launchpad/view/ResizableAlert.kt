@@ -13,7 +13,7 @@ class ResizableAlert(alertType: AlertType?, contentText: String?) : Alert(alertT
 
     companion object {
         fun setIcon(window: Window) {
-            (window as? Stage)?.icons?.setAll(Image(ResizableAlert::class.java.getResource("/io/github/openstarruler/launchpad/sr2.png").toString()))
+            (window as? Stage)?.icons?.setAll(Image(ResizableAlert::class.java.getResource("/io/github/openstarruler/launchpad/sr2.png")!!.toString()))
         }
     }
 }
