@@ -14,10 +14,10 @@ repositories {
 
 dependencies {
     implementation(platform(kotlin("bom")))
-    implementation("org.eclipse.jgit:org.eclipse.jgit:6.0.0.202111291000-r")
+    implementation("org.eclipse.jgit:org.eclipse.jgit:6.4.0.202211300538-r")
     implementation("com.google.code.gson:gson:2.10.1")
-    implementation("org.jetbrains:annotations:6.4.0.202211300538-r")
-    implementation(kotlin("stdlib-jdk8"))
+    implementation("org.jetbrains:annotations:24.0.0")
+    implementation(kotlin("stdlib"))
 
     implementation(platform("com.squareup.okhttp3:okhttp-bom:4.10.0"))
     implementation("com.squareup.okhttp3:okhttp")
