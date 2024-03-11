@@ -7,6 +7,6 @@ class ReleaseCell: ListCell<Release?>() {
     override fun updateItem(item: Release?, empty: Boolean) {
         super.updateItem(item, empty)
 
-        text = if (item == null) "" else item.name
+        text = item?.name ?: ""
     }
 }

@@ -2,10 +2,10 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     application
-    id("org.openjfx.javafxplugin") version "0.0.10"
-    id("org.javamodularity.moduleplugin") version "1.8.10"
-    id("org.beryx.jlink") version "2.24.4"
-    kotlin("jvm") version "1.6.10"
+    id("org.openjfx.javafxplugin") version "0.0.13"
+    id("org.javamodularity.moduleplugin") version "1.8.12"
+    id("org.beryx.jlink") version "2.26.0"
+    kotlin("jvm") version "1.8.10"
 }
 
 repositories {
@@ -14,22 +14,22 @@ repositories {
 
 dependencies {
     implementation(platform(kotlin("bom")))
-    implementation("org.eclipse.jgit:org.eclipse.jgit:6.0.0.202111291000-r")
-    implementation("com.google.code.gson:gson:2.8.9")
-    implementation("org.jetbrains:annotations:23.0.0")
-    implementation(kotlin("stdlib-jdk8"))
+    implementation("org.eclipse.jgit:org.eclipse.jgit:6.4.0.202211300538-r")
+    implementation("com.google.code.gson:gson:2.10.1")
+    implementation("org.jetbrains:annotations:24.0.0")
+    implementation(kotlin("stdlib"))
 
-    implementation(platform("com.squareup.okhttp3:okhttp-bom:4.9.3"))
+    implementation(platform("com.squareup.okhttp3:okhttp-bom:4.10.0"))
     implementation("com.squareup.okhttp3:okhttp")
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 javafx {
-    version = "11.0.2"
+    version = "19.0.2.1"
     modules = mutableListOf("javafx.controls", "javafx.fxml")
 }
 
@@ -79,6 +79,6 @@ tasks.withType<CreateStartScripts> {
 
 tasks.withType<KotlinCompile> {
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "17"
     }
 }

@@ -1,7 +1,5 @@
 module io.github.openstarruler.launchpad {
 	requires kotlin.stdlib;
-	requires kotlin.stdlib.jdk7;
-	requires kotlin.stdlib.jdk8;
 
 	requires javafx.controls;
 	requires javafx.fxml;
