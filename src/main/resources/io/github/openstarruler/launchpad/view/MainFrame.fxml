@@ -43,6 +43,7 @@
       <ButtonBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <buttons>
           <Button fx:id="playButton" mnemonicParsing="false" onAction="#startGame" text="Play" />
+          <Button fx:id="playLegacyButton" mnemonicParsing="false" onAction="#startLegacyGame" text="Play in Legacy Mode" />
         </buttons>
          <BorderPane.margin>
             <Insets left="6.0" right="6.0" />

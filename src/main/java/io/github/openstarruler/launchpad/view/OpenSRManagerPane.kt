@@ -19,6 +19,7 @@ import java.io.File
 import java.io.IOException
 
 class OpenSRManagerPane : GridPane() {
+    lateinit var playLegacyButton: Button
     lateinit var playButton: Button
 
     @FXML lateinit var osrVersionList: ListView<Release?>
@@ -59,6 +60,7 @@ class OpenSRManagerPane : GridPane() {
 
     private fun setSR2Path(window: Window) {
         playButton.isDisable = true
+        playLegacyButton.isDisable = true
         setSR2Path(File(Settings.instance.gamePath), window)
     }
 
@@ -70,28 +72,26 @@ class OpenSRManagerPane : GridPane() {
         val dir = chooser.showDialog(window)
         if (dir == null || !dir.exists()) return
         val launcher = File(dir, if (Utils.IS_WINDOWS) "Star Ruler 2.exe" else "StarRuler2.sh")
-        // TODO: This message doesn't make sense when installing OpenSR from scratch.
-        //       However, it's still useful if you're trying to upgrade an existing
-        //       installation of SR2.
         if (!launcher.exists()) {
             val msg =
-                ResizableAlert(AlertType.WARNING, "This is not the root directory of a Star Ruler 2 installation!")
+                ResizableAlert(AlertType.WARNING, "This is not the root directory of a Star Ruler 2 installation! If you aren't trying to upgrade an existing installation, you can disregard this warning.")
             msg.initOwner(scene.window)
             msg.show()
         }
         Settings.instance.gamePath = dir.absolutePath
         gamePathLabel.text = Settings.instance.gamePath
         playButton.isDisable = !launcher.exists()
+        playLegacyButton.isDisable = !File(dir, "bin_legacy").exists()
         if (Settings.instance.isFirstRun) {
             val dlg = ResizableAlert(
                 AlertType.CONFIRMATION,
-                "Do you want to install the latest stable version of OpenSR now? If not, you can install OpenSR later via the 'Manage OpenSR' tab.\n\nWARNING: Steam users may wish to back up their SR2 binaries (the 'bin' folder) first, in order to upload mods to the Steam Workshop.")
+                "Do you want to install the latest stable version of OpenSR now? If not, you can install OpenSR later via the 'Manage OpenSR' tab.")
             dlg.dialogPane.buttonTypes.setAll(ButtonType.YES, ButtonType.NO)
             dlg.headerText = "Install OpenSR now?"
             dlg.initOwner(scene.window)
             dlg.showAndWait()
                 .filter { it == ButtonType.YES }
-                .ifPresent { installOpenSR() }
+                .ifPresent { installOpenSR(launcher.exists()) }
         }
         Settings.instance.isFirstRun = false
         try {
@@ -104,11 +104,26 @@ class OpenSRManagerPane : GridPane() {
         }
     }
 
-    fun installOpenSR() {
+    @FXML
+    private fun installOpenSR() {
+        installOpenSR(false)
+    }
+
+    private fun installOpenSR(backupLegacyBinaries: Boolean) {
         MainController.executeTask("Preparing to install OpenSR...") {
             taskInstallStage: Stage ->
             object : Task<Unit>() {
                 override fun call() {
+                    if(backupLegacyBinaries) {
+                        updateMessage("Backing up legacy binaries...")
+                        val legacyFolder = File(Settings.instance.gamePath, "bin_legacy")
+                        val originalFolder = File(Settings.instance.gamePath, "bin")
+                        if(!legacyFolder.exists() && originalFolder.exists()) {
+                            originalFolder.renameTo(legacyFolder)
+                        }
+                        playLegacyButton.isDisable = false
+                    }
+
                     updateMessage("Preparing to install OpenSR...")
                     OpenSRManager.installOpenSR(
                         osrVersionList.selectionModel.selectedItem ?: OpenSRManager.openSRVersions.first { it.tagName == "stable" },

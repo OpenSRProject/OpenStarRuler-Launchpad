@@ -22,6 +22,7 @@ import kotlin.system.exitProcess
 class MainController {
     // Shared UI components.
     @FXML private lateinit var playButton: Button
+    @FXML private lateinit var playLegacyButton: Button
 
     @FXML internal lateinit var tabs: TabPane
     @FXML internal lateinit var modsTab: Tab
@@ -43,6 +44,7 @@ class MainController {
             uninstallModItem.isDisable = newTab !== installerTab
         }
         osrPane.playButton = playButton
+        osrPane.playLegacyButton = playLegacyButton
         installerPane.deleteRepositoryItem = deleteRepositoryItem
 
         if (
@@ -148,7 +150,7 @@ class MainController {
             """
                   OpenSR Launchpad
                   
-                  Version: 2.0.1
+                  Version: 2.1.0
                   
                   GitHub: https://github.com/OpenSRProject/OpenStarRuler-Launchpad
                   Discord: https://discord.gg/sUJKJDc
@@ -160,6 +162,15 @@ class MainController {
 
     @FXML
     private fun startGame() {
+        startGame(false)
+    }
+
+    @FXML
+    private fun startLegacyGame() {
+        startGame(true)
+    }
+
+    private fun startGame(runLegacy: Boolean) {
         val launcher =
             File(Settings.instance.gamePath, if (Utils.IS_WINDOWS) "Star Ruler 2.exe" else "StarRuler2.sh")
         if (!launcher.exists()) ResizableAlert(
@@ -172,8 +183,11 @@ class MainController {
             "Cannot start Star Ruler 2: Couldn't run game loader!"
         )
             .showAndWait()
+        val params = mutableListOf(launcher.absolutePath)
+        if(runLegacy)
+            params.add("--legacy")
         try {
-            ProcessBuilder(launcher.absolutePath)
+            ProcessBuilder(params)
                 .directory(launcher.parentFile)
                 .start()
         } catch (e: Exception) {
