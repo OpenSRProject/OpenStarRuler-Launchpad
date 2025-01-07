@@ -47,8 +47,6 @@ When you first start the Launchpad, you will be prompted to navigate to your Sta
 
 After this is done, you will be asked if you want to install the latest stable version of OpenSR now. This is recommended, but if you choose not to do it, you may do so later at any time.
 
-**WARNING:** The binaries distributed with Steam copies of Star Ruler 2 are the only ones capable of connecting to the Steam Workshop to upload new mods to the Workshop. If you are a modder (or expect to become one later), and have a Steam copy of the game, you should make a backup of the game's `bin` folder before you install OpenSR. If you do not do this, you will not be able to upload mods to the Steam Workshop! (This does not prevent you from installing mods from the Workshop, though. Automatic backup functionality may be added to the Launchpad at a later date.)
-
 ### Installing/Updating OpenSR
 
 Installing/updating OpenSR is a fairly straightforward process. Start by switching to the "Manage OpenSR" tab.
