@@ -77,6 +77,8 @@ class ModInstallerPane() : GridPane() {
 
     private fun updateModList(mods: Map<String, RepoMetadata.Mod>) {
         modList.items.setAll(mods.keys)
+        if(modList.items.size == 1)
+            setSelectedMod(modList.items.first())
     }
 
     private fun setActiveBranch(branchName: String?) {
