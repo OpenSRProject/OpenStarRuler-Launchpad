@@ -2,6 +2,7 @@ package io.github.openstarruler.launchpad.model
 
 class RepoMetadata {
     class Dependency {
+        val sameSource: Boolean? = null
         var name: String? = null
         var repository: String? = null
         var branch: String? = null

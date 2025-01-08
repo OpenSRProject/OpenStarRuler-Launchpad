@@ -217,13 +217,13 @@ object ModInstaller {
                     meta = Gson().fromJson(reader, RepoMetadata::class.java)
                     if(modName != null && meta?.mods?.containsKey(modName) == true) {
                         meta?.mods?.get(modName)?.dependencies?.forEach { dependency ->
-                            if (!installDependency(dependency, progressHandler, warningHandler))
+                            if (!installDependency(dependency, progressHandler, warningHandler, repo))
                                 warningHandler.handle("WARNING: Failed to install dependency ${dependency.name}!\n\nThe mod may behave erratically or fail to start. Please try to install the dependency manually, or contact the mod (and/or dependency) developers.")
                         }
                     }
                     else {
                         meta?.dependencies?.forEach { dependency ->
-                            if (!installDependency(dependency, progressHandler, warningHandler))
+                            if (!installDependency(dependency, progressHandler, warningHandler, repo))
                                 warningHandler.handle("WARNING: Failed to install dependency ${dependency.name}!\n\nThe mod may behave erratically or fail to start. Please try to install the dependency manually, or contact the mod (and/or dependency) developers.")
                         }
                     }
@@ -330,31 +330,39 @@ object ModInstaller {
     private fun installDependency(
         dependency: RepoMetadata.Dependency,
         progressHandler: TextHandler,
-        warningHandler: TextHandler
+        warningHandler: TextHandler,
+        parentRepo: Git
     ): Boolean {
         return try {
-            progressHandler.handle("Parsing URL for dependency \"" + dependency.name + "\"...")
-            if (dependency.repository == null || dependency.repository == "") {
-                warningHandler.handle(
-                    String.format(
-                        "Failed to install dependency \"%s\": Dependency metadata doesn't specify a URL. The author may be playing a prank on his users.",
-                        dependency.name
+            val depRepo: Git
+            if (dependency.sameSource != true) {
+                progressHandler.handle("Parsing URL for dependency \"" + dependency.name + "\"...")
+                if (dependency.repository == null || dependency.repository == "") {
+                    warningHandler.handle(
+                        String.format(
+                            "Failed to install dependency \"%s\": Dependency metadata doesn't specify a URL. The author may be playing a prank on his users.",
+                            dependency.name
+                        )
                     )
-                )
-                return false
+                    return false
+                }
+                val url = parseRepoURL(dependency.repository!!)
+                val localRoot = getLocalRoot(url)
+                val loadingHandler = GitProgressHandler("Loading dependency \"${dependency.name}\"...", progressHandler)
+                depRepo = cloneRepository(localRoot, url, loadingHandler)
+                // TODO: This repo instance is never closed. Need to refactor sometime.
+                depRepo.checkout()
+                    .setName(dependency.branch)
+                    .setProgressMonitor(loadingHandler)
+                    .setCreateBranch(depRepo.repository.resolve("refs/heads/" + dependency.branch) == null)
+                    .setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK)
+                    .setStartPoint("refs/remotes/origin/" + dependency.branch)
+                    .call()
+                depRepo.pull().setProgressMonitor(loadingHandler).call()
             }
-            val url = parseRepoURL(dependency.repository!!)
-            val localRoot = getLocalRoot(url)
-            val loadingHandler = GitProgressHandler("Loading dependency \"${dependency.name}\"...", progressHandler)
-            val depRepo = cloneRepository(localRoot, url, loadingHandler)
-            depRepo.checkout()
-                .setName(dependency.branch)
-                .setProgressMonitor(loadingHandler)
-                .setCreateBranch(depRepo.repository.resolve("refs/heads/" + dependency.branch) == null)
-                .setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK)
-                .setStartPoint("refs/remotes/origin/" + dependency.branch)
-                .call()
-            depRepo.pull().setProgressMonitor(loadingHandler).call()
+            else {
+                depRepo = parentRepo
+            }
             val internalWarningHandler = TextHandler { text ->
                 warningHandler.handle(
                     String.format(
