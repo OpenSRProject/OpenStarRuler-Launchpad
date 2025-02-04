@@ -185,7 +185,7 @@ class MainController {
             .showAndWait()
         val params = mutableListOf(launcher.absolutePath)
         if(runLegacy)
-            params.add("--useLegacyBinaries")
+            params.add("--legacy")
         try {
             ProcessBuilder(params)
                 .directory(launcher.parentFile)
