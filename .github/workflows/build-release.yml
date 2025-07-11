@@ -23,7 +23,7 @@ jobs:
       - name: Build standard release
         run: ./gradlew distZip
       - name: Upload standard release
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: OpenSR Launchpad ${{github.ref_name}} (Standard-Windows).zip
           path: build/distributions/OpenStarRuler-Launchpad.zip
@@ -37,7 +37,7 @@ jobs:
         run: New-Item -Name "OpenStarRuler-Launchpad" -ItemType "directory"; Rename-Item README.md README.txt; Copy-Item -Path README.txt,LICENSE.txt,build/image/*,OSRLaunchpad.bat -Destination "OpenStarRuler-Launchpad" -Recurse; Compress-Archive -Path "OpenStarRuler-Launchpad" -DestinationPath "standalone-windows.zip"
         shell: powershell
       - name: Upload standalone release
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: OpenSR Launchpad ${{github.ref_name}} (Standalone-Win64).zip
           path: standalone-windows.zip
@@ -57,7 +57,7 @@ jobs:
       - name: Build standard release
         run: ./gradlew distZip
       - name: Upload standard release
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: OpenSR Launchpad ${{github.ref_name}} (Standard-Linux).zip
           path: build/distributions/OpenStarRuler-Launchpad.zip
@@ -74,7 +74,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
       - name: Attach artifacts
         uses: softprops/action-gh-release@v1
         with:
