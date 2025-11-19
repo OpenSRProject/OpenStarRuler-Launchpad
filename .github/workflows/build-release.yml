@@ -26,7 +26,7 @@ jobs:
       - name: Upload standard release
         uses: actions/upload-artifact@v4
         with:
-          name: OpenSR Launchpad ${{github.ref_name}} (Standard-Windows).zip
+          name: OpenSR Launchpad ${{github.ref_name}} (Standard-Windows)
           path: OpenSR Launchpad ${{github.ref_name}} (Standard-Windows).zip
 
       - name: Build standalone release
@@ -40,7 +40,7 @@ jobs:
       - name: Upload standalone release
         uses: actions/upload-artifact@v4
         with:
-          name: OpenSR Launchpad ${{github.ref_name}} (Standalone-Win64).zip
+          name: OpenSR Launchpad ${{github.ref_name}} (Standalone-Win64)
           path: OpenSR Launchpad ${{github.ref_name}} (Standalone-Win64).zip
 
   build-linux:
@@ -61,7 +61,7 @@ jobs:
       - name: Upload standard release
         uses: actions/upload-artifact@v4
         with:
-          name: OpenSR Launchpad ${{github.ref_name}} (Standard-Linux).zip
+          name: OpenSR Launchpad ${{github.ref_name}} (Standard-Linux)
           path: OpenSR Launchpad ${{github.ref_name}} (Standard-Linux).zip
 
       # TODO: Figure out launcher script (and whether one is even needed)
