@@ -21,13 +21,13 @@ jobs:
         uses: gradle/wrapper-validation-action@v1
 
       - name: Build standard release
-        run: ./gradlew distZip && mv build/distributions/OpenStarRuler-Launchpad.zip "OpenSR_Launchpad_${GITHUB_REF_NAME}_(Standard-Windows).zip"
+        run: ./gradlew distZip && mv build/distributions/OpenStarRuler-Launchpad.zip "OpenSR_Launchpad_${GITHUB_REF_NAME}_Standard-Windows.zip"
         shell: bash
       - name: Upload standard release
         uses: actions/upload-artifact@v4
         with:
           name: OpenSR Launchpad ${{github.ref_name}} (Standard-Windows)
-          path: OpenSR_Launchpad_${{github.ref_name}}_(Standard-Windows).zip
+          path: OpenSR_Launchpad_${{github.ref_name}}_Standard-Windows.zip
 
       - name: Build standalone release
         run: ./gradlew jlink
@@ -35,13 +35,13 @@ jobs:
         run: '"bin\OSRLaunchpad.bat" | Out-File -FilePath OSRLaunchpad.bat -Encoding "ascii"'
         shell: powershell
       - name: Pack standalone release
-        run: New-Item -Name "OpenStarRuler-Launchpad" -ItemType "directory"; Rename-Item README.md README.txt; Copy-Item -Path README.txt,LICENSE.txt,build/image/*,OSRLaunchpad.bat -Destination "OpenStarRuler-Launchpad" -Recurse; Compress-Archive -Path "OpenStarRuler-Launchpad" -DestinationPath "OpenSR_Launchpad_${env:GITHUB_REF_NAME}_(Standalone-Win64).zip"
+        run: New-Item -Name "OpenStarRuler-Launchpad" -ItemType "directory"; Rename-Item README.md README.txt; Copy-Item -Path README.txt,LICENSE.txt,build/image/*,OSRLaunchpad.bat -Destination "OpenStarRuler-Launchpad" -Recurse; Compress-Archive -Path "OpenStarRuler-Launchpad" -DestinationPath "OpenSR_Launchpad_${env:GITHUB_REF_NAME}_Standalone-Win64.zip"
         shell: powershell
       - name: Upload standalone release
         uses: actions/upload-artifact@v4
         with:
           name: OpenSR Launchpad ${{github.ref_name}} (Standalone-Win64)
-          path: OpenSR_Launchpad_${{github.ref_name}}_(Standalone-Win64).zip
+          path: OpenSR_Launchpad_${{github.ref_name}}_Standalone-Win64.zip
 
   build-linux:
     runs-on: ubuntu-latest
@@ -56,13 +56,13 @@ jobs:
         uses: gradle/wrapper-validation-action@v1
 
       - name: Build standard release
-        run: ./gradlew distZip && mv build/distributions/OpenStarRuler-Launchpad.zip "OpenSR_Launchpad_${GITHUB_REF_NAME}_(Standard-Linux).zip"
+        run: ./gradlew distZip && mv build/distributions/OpenStarRuler-Launchpad.zip "OpenSR_Launchpad_${GITHUB_REF_NAME}_Standard-Linux.zip"
         shell: bash
       - name: Upload standard release
         uses: actions/upload-artifact@v4
         with:
           name: OpenSR Launchpad ${{github.ref_name}} (Standard-Linux)
-          path: OpenSR_Launchpad_${{github.ref_name}}_(Standard-Linux).zip
+          path: OpenSR_Launchpad_${{github.ref_name}}_Standard-Linux.zip
 
       # TODO: Figure out launcher script (and whether one is even needed)
       #- name: Build standalone release
