@@ -21,8 +21,8 @@ jobs:
         uses: gradle/wrapper-validation-action@v1
 
       - name: Build standard release
-        run: ./gradlew distZip && ren build/distributions/OpenStarRuler-Launchpad.zip "OpenSR Launchpad $GITHUB_REF_NAME (Standard-Windows).zip"
-        shell: cmd
+        run: ./gradlew distZip && mv build/distributions/OpenStarRuler-Launchpad.zip "OpenSR Launchpad $GITHUB_REF_NAME (Standard-Windows).zip"
+        shell: bash
       - name: Upload standard release
         uses: actions/upload-artifact@v4
         with:
