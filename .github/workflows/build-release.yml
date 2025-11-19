@@ -80,5 +80,5 @@ jobs:
       - name: Attach artifacts
         uses: softprops/action-gh-release@v2
         with:
-          files: '**/OpenSR Launchpad*.zip/*'
+          files: '**/OpenSR Launchpad*.zip'
           fail_on_unmatched_files: true
